@@ -6,6 +6,13 @@ the values passed into the source).  It does work however :)  Right now it also 
 there is an asset at assets/images/calendarheader.png which it will use to display the header
 and an asset at assets/images/calendarbanner.jpg which it will use for the month header.
 
+
+The calendar uses slivers to display the widgets in the view and lets you scroll forward
+and backward through the events.  The header widget will drop down and open up the days of
+the month, letting you select specific days as well as move back and forth between the months.
+By default it displays a list of events and not a day view, the day view code is all just a
+stub right now.
+
 Here is how to use the calendar widget itself:
 
 ```

@@ -1,20 +1,24 @@
 name: calendar
 description: Display a calendar view for flutter.
 version: 0.0.1
-author: David Bennett
+author: David Bennett <pinkfishfrog@gmail.com>
 homepage: https://github.com/pinkfish/flutter_places_dialog
 
+environment:
+    sdk: ">=1.8.0 <2.0.0"
 dependencies:
   flutter:
-    sdk: flutter
-  flutter_localizations:
-    sdk: flutter
+    sdk: ">=1.8.0 <2.0.0"
+  flutter_localizations: ^0.0.0
+  intl:  ^0.15.5
 
   timezone:
+     # Need to use git here since there is a bug in the main repository.
      git:
        url: "https://github.com/pinkfish/timezone.git"
 
 dev_dependencies:
+  test: any
   flutter_test:
     sdk: flutter
 
