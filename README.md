@@ -79,6 +79,7 @@ class GameListCalendarState extends CalendarSource {
 
 Example of the calendar widget in action:
 <img src="https://github.com/pinkfish/flutter_calendar/blob/master/screenshots/screenshot.png?raw=true">
+<video id="sliverCalendar" src="https://github.com/pinkfish/flutter_calendar/blob/master/screenshots/screenrecording.mov?raw=true" controls></video>
 
 ## Getting Started
 

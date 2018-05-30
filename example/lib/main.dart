@@ -113,10 +113,12 @@ class CalendarEventSource extends CalendarSource {
 
   @override
   Widget buildWidget(BuildContext context, CalendarEvent index) {
-    return new ListTile(
-      title: new Text("Event ${index.index}"),
-      subtitle: new Text("Yay for events"),
-      leading: const Icon(Icons.gamepad),
+    return new Card(
+      child: new ListTile(
+        title: new Text("Event ${index.index}"),
+        subtitle: new Text("Yay for events"),
+        leading: const Icon(Icons.gamepad),
+      ),
     );
   }
 }
