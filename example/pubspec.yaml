@@ -4,6 +4,13 @@ description: Example of how to use the calendar widget.
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_timezone: ^1.0.0
+  sliver_calendar:
+    path: ../
+  timezone:
+     # Need to use git here since there is a bug in the main repository.
+     git:
+       url: "https://github.com/pinkfish/timezone.git"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -12,10 +19,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  sliver_calendar:
-    path: ../
-  flutter_native_timezone:
-    any
 
 
 # For information on the generic Dart part of this file, see the
