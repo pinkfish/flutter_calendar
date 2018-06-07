@@ -5,13 +5,15 @@ author: David Bennett <pinkfishfrog@gmail.com>
 homepage: https://github.com/pinkfish/flutter_places_dialog
 
 environment:
-    sdk: ">=1.8.0 <=2.0.0"
+    sdk: ">=1.19.0 <=2.0.0"
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   intl:  ^0.15.5
+  flutter_native_timezone: ^1.0.0
+
 
   timezone:
      # Need to use git here since there is a bug in the main repository.
