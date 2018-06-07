@@ -60,6 +60,8 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     bool reachedEnd = false;
     bool forceScrollUpdate = false;
 
+    print('new top $newTopScrollIndex');
+
     // This algorithm in principle is straight-forward: find the first child
     // that overlaps the given scrollOffset, creating more children at the top
     // of the list if necessary, then walk down the list updating and laying out
@@ -212,7 +214,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     if (earliestUsefulChild != null) {
       final SliverMultiBoxAdaptorParentData parentData =
           earliestUsefulChild.parentData;
-      sharedState?.currentTopIndex = parentData.index ~/ 2;
+      sharedState?.currentTopDisplayIndex = parentData.index ~/ 2;
     }
 
     // Make sure we've laid out at least one child.

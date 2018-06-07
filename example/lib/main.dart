@@ -43,7 +43,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   CalendarSource source;
 
   @override
@@ -67,6 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     initialDate: new TZDateTime.now(loc),
                     location: loc,
                     source: source,
+                    bannerHeader:
+                        new AssetImage("assets/images/calendarheader.jpg"),
+                    monthHeader:
+                        new AssetImage("assets/images/calendarbanner.jpg"),
                   ),
                 );
               } else {

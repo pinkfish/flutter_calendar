@@ -14,12 +14,13 @@ const Duration _kExpand = const Duration(milliseconds: 200);
 class CalendarHeader extends StatefulWidget {
   final Location _location;
   final String calendarKey;
+  final ImageProvider bannerHeader;
 
   ///
   /// Creates the calendar header.  [calendarKey] is the key to find the shared
   /// state from.  [location] to use for the calendar.
   ///
-  CalendarHeader(this.calendarKey, Location location)
+  CalendarHeader(this.calendarKey, this.bannerHeader, Location location)
       : _location = location ?? local;
 
   @override
@@ -37,6 +38,7 @@ class CalendarHeaderState extends State<CalendarHeader>
 
   StreamSubscription<int> _subscription;
   StreamSubscription<bool> _headerExpandedSubscription;
+  StreamSubscription<int> _indexChangeSubscription;
   SharedCalendarState sharedState;
   AnimationController _controller;
   CurvedAnimation _easeInAnimation;
@@ -44,26 +46,32 @@ class CalendarHeaderState extends State<CalendarHeader>
   bool myExpandedState = false;
   int _monthIndex;
 
-  int monthIndexFromTime(TZDateTime time) {
+  int monthIndexFromTime(DateTime time) {
     return (time.year - 1970) * 12 + (time.month - 1);
   }
 
-  TZDateTime monthToShow(int index) {
-    return new TZDateTime(
-        sharedState.location, index ~/ 12 + 1970, index % 12 + 1, 1);
+  DateTime monthToShow(int index) {
+    return new DateTime(index ~/ 12 + 1970, index % 12 + 1, 1);
   }
 
   void initState() {
     super.initState();
-    _monthIndex = monthIndexFromTime(new TZDateTime.now(widget._location));
+    _monthIndex = monthIndexFromTime(new DateTime.now());
     _controller = new AnimationController(duration: _kExpand, vsync: this);
     sharedState = SharedCalendarState.get(widget.calendarKey);
     _easeInAnimation =
         new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _iconTurns =
         new Tween<double>(begin: 0.0, end: 0.5).animate(_easeInAnimation);
-    sharedState.indexChangeStream.listen((int newTop) {
-      setState(() {});
+    _indexChangeSubscription =
+        sharedState.indexChangeStream.listen((int newTop) {
+      setState(() {
+        int ms = (sharedState.currentTopDisplayIndex + 1) *
+            Duration.millisecondsPerDay;
+        DateTime currentTopTemp = new DateTime.fromMillisecondsSinceEpoch(ms);
+
+        _monthIndex = monthIndexFromTime(currentTopTemp);
+      });
     });
     _headerExpandedSubscription =
         sharedState.headerExpandedChangeStream.listen((bool change) {
@@ -97,6 +105,8 @@ class CalendarHeaderState extends State<CalendarHeader>
     _controller = null;
     _headerExpandedSubscription?.cancel();
     _headerExpandedSubscription = null;
+    _indexChangeSubscription?.cancel();
+    _indexChangeSubscription = null;
   }
 
   void _handleOpen() {
@@ -160,10 +170,10 @@ class CalendarHeaderState extends State<CalendarHeader>
   }
 
   Widget _buildCurrentHeader(BuildContext context) {
-    int ms = (sharedState.currentTopIndex + 1) * Duration.millisecondsPerDay;
-    TZDateTime currentTopTemp = new TZDateTime.fromMillisecondsSinceEpoch(
-        widget._location, ms + widget._location.timeZone(ms).offset);
-    TZDateTime currentTop = new TZDateTime(widget._location,
+    int ms =
+        (sharedState.currentTopDisplayIndex + 1) * Duration.millisecondsPerDay;
+    DateTime currentTopTemp = new DateTime.fromMillisecondsSinceEpoch(ms);
+    DateTime currentTop = new DateTime(
         currentTopTemp.year, currentTopTemp.month, currentTopTemp.day);
 
     return new Container(
@@ -171,7 +181,7 @@ class CalendarHeaderState extends State<CalendarHeader>
       decoration: new BoxDecoration(
         color: Colors.white,
         image: new DecorationImage(
-          image: new AssetImage("assets/images/calendarheader.png"),
+          image: widget.bannerHeader,
           fit: BoxFit.fitHeight,
           alignment: new Alignment(1.0, 1.0),
         ),
@@ -234,7 +244,7 @@ class _CalendarEventIndicator extends CustomPainter {
 class _CalendarMonthDisplay extends StatelessWidget {
   final SharedCalendarState sharedState;
   final Location location;
-  final TZDateTime displayDate;
+  final DateTime displayDate;
 
   static const Duration week = const Duration(days: 7);
 
@@ -286,7 +296,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
     }
   }
 
-  Widget _buildButton(ThemeData theme, TZDateTime day, TZDateTime nowTime) {
+  Widget _buildButton(ThemeData theme, DateTime day, DateTime nowTime) {
     Widget button;
     // Only show days in the current month.
     if (day.month != displayDate.month) {
@@ -312,20 +322,19 @@ class _CalendarMonthDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     TZDateTime nowTmp = new TZDateTime.now(location);
-    TZDateTime nowTime =
-        new TZDateTime(location, nowTmp.year, nowTmp.month, nowTmp.day);
-    TZDateTime topFirst = displayDate;
+    DateTime nowTmp = new DateTime.now();
+    DateTime nowTime = new DateTime(nowTmp.year, nowTmp.month, nowTmp.day);
+    DateTime topFirst = displayDate;
     topFirst = topFirst.subtract(new Duration(days: topFirst.weekday));
-    TZDateTime topSecond = topFirst.add(week);
+    DateTime topSecond = topFirst.add(week);
     if (topSecond.day == 1) {
       // Opps, out by a week.
       topFirst = topSecond;
       topSecond = topFirst.add(week);
     }
-    TZDateTime topThird = topSecond.add(week);
-    TZDateTime topFourth = topThird.add(week);
-    TZDateTime topFifth = topFourth.add(week);
+    DateTime topThird = topSecond.add(week);
+    DateTime topFourth = topThird.add(week);
+    DateTime topFifth = topFourth.add(week);
     List<Widget> dayHeaders = [];
     List<Widget> firstDays = [];
     List<Widget> secondDays = [];

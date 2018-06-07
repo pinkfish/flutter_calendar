@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
+import 'sliverscrollviewcalendar.dart';
 
 /// One day duration to use in the rest of the system.
 const Duration oneDay = const Duration(days: 1);
@@ -8,7 +9,7 @@ const Duration oneDay = const Duration(days: 1);
 /// The source for the calendar, this is where to get all the events from.
 ///
 abstract class CalendarSource {
-  CalendarEventElement state;
+  SliverScrollViewCalendarElement element;
 
   List<CalendarEvent> getEvents(DateTime start, DateTime end);
 
@@ -22,16 +23,25 @@ abstract class CalendarSource {
   /// Called on startup to connect the calendar event element to the source.
   /// This is used to handle the [scroolToDay] call.
   ///
-  void init(CalendarEventElement state) {
-    this.state = state;
+  void init(SliverScrollViewCalendarElement key) {
+    this.element = key;
     initState();
   }
 
   ///
-  /// Scrolls the calendar to the specific datetime set here.
+  /// Scrolls the calendar to the specific datetime set here.  Note
+  /// we only use the month/day/year for this.  The milliseconds is
+  /// *not* correct and not in local time.
   ///
-  void scrollToDay(TZDateTime time) {
-    state.scrollToDate(time);
+  void scrollToDay(DateTime time) {
+    element.scrollToDate(time);
+  }
+
+  ///
+  /// Updates the events queue to rebuild the display.
+  ///
+  void updateEvents() {
+    element.updateEvents();
   }
 
   ///
@@ -72,13 +82,14 @@ class CalendarEvent {
 
   TZDateTime get instantEnd => _instantEnd;
 
+  static const int YEAR_OFFSET = 12 * 31;
+  static const int MONTH_OFFSET = 31;
+
   static int indexFromMilliseconds(DateTime time, Location loc) {
-    if (loc == null) {
-      return time.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay;
-    }
-    return ((time.millisecondsSinceEpoch +
-            loc.timeZone(time.millisecondsSinceEpoch).offset) ~/
-        Duration.millisecondsPerDay);
+    return time.year * YEAR_OFFSET +
+        (time.month - 1) * MONTH_OFFSET +
+        time.day -
+        1;
   }
 
   @override

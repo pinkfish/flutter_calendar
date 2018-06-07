@@ -11,6 +11,7 @@ import 'sliverscrollviewcalendar.dart';
 ///
 /// The widget to show the calendar with a header that displays the
 /// current month, drop down and then the events in a sliverlist.
+///
 class CalendarWidget extends StatelessWidget {
   final TZDateTime initialDate;
   final CalendarSource source;
@@ -19,6 +20,8 @@ class CalendarWidget extends StatelessWidget {
   final double initialScrollOffset;
   final SharedCalendarState sharedState;
   final String coordinationKey;
+  final ImageProvider monthHeader;
+  final ImageProvider bannerHeader;
 
   ///
   /// Creates a calendar widget in place.  The [initialDate] is the date
@@ -37,6 +40,8 @@ class CalendarWidget extends StatelessWidget {
   CalendarWidget(
       {@required this.initialDate,
       @required this.source,
+      @required this.bannerHeader,
+      @required this.monthHeader,
       this.view = CalendarViewType.Schedule,
       Location location,
       String calendarKey,
@@ -46,7 +51,10 @@ class CalendarWidget extends StatelessWidget {
         initialScrollOffset = initialScrollOffset ??
             new DateTime.now().microsecondsSinceEpoch.toDouble(),
         sharedState = SharedCalendarState.createState(
-            calendarKey ?? "calendarwidget", source, initialDate, location ?? local);
+            calendarKey ?? "calendarwidget",
+            source,
+            initialDate,
+            location ?? local);
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +63,14 @@ class CalendarWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        new CalendarHeader(coordinationKey, location),
+        new CalendarHeader(coordinationKey, bannerHeader, location),
         new Expanded(
           child: new WrappedScrollViewCalendar(
               initialDate: initialDate,
               initialScrollOffset: initialScrollOffset,
               view: view,
               location: location,
+              monthHeader: monthHeader,
               calendarKey: coordinationKey),
         ),
       ],
