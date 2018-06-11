@@ -46,7 +46,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
             2 -
         2;
     _sharedState.currentTopDisplayIndex = _startDisplayIndex;
-    print("Display index ${_startDisplayIndex} $_nowIndex");
+    print("Display index $_startDisplayIndex $_nowIndex");
     _type = calendarWidget.view;
     // Normalize the dates.
     TZDateTime normalizedStart = new TZDateTime(
@@ -484,6 +484,8 @@ class SliverScrollViewCalendarElement extends StatelessElement
   void unmount() {
     super.unmount();
     _sharedState.source.dispose();
+    _topIndexChangedSubscription?.cancel();
+    _topIndexChangedSubscription = null;
   }
 
   @override
