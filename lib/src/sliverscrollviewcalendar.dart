@@ -45,7 +45,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
             Duration.millisecondsPerDay *
             2 -
         2;
-    _sharedState.currentTopDisplayIndex = _startDisplayIndex;
+    _sharedState.currentTopDisplayIndex = _startDisplayIndex ~/ 2;
     print("Display index $_startDisplayIndex $_nowIndex");
     _type = calendarWidget.view;
     // Normalize the dates.
@@ -91,7 +91,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
     _topIndexChangedSubscription =
         _sharedState.indexChangeStream.listen((int newIndex) {
       // NB: this is the display index, so in GM
-      int ms = newIndex ~/ 2 * Duration.millisecondsPerDay;
+      int ms = newIndex * Duration.millisecondsPerDay;
 
       bool changed = false;
       TZDateTime top =
@@ -100,6 +100,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
       if (_startWindow.difference(top).inDays < 30 ||
           top.isBefore(_startWindow)) {
         // Set a new start window.
+        print("Moving start window $newIndex $top $_startWindow");
         _startWindow = top.subtract(new Duration(days: 60));
         changed = true;
       }
@@ -124,7 +125,8 @@ class SliverScrollViewCalendarElement extends StatelessElement
   void scrollToDate(DateTime time) {
     SliverScrollViewCalendar calendarWidget = widget;
     RenderBox firstChild = _sharedState.renderSliverList.firstChild;
-    int scrollToIndex = time.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay * 2;
+    int scrollToIndex =
+        time.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay * 2;
     if (firstChild != null) {
       final SliverMultiBoxAdaptorParentData firstParentData =
           firstChild.parentData;

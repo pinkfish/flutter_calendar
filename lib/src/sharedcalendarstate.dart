@@ -27,11 +27,15 @@ class SharedCalendarState {
       @required DateTime currentTop,
       @required this.location})
       : _currentTopDisplayIndex =
-            currentTop.millisecondsSinceEpoch ~/ Duration.microsecondsPerDay;
+            currentTop.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay {
+    print("shared cal $_currentTopDisplayIndex");
+  }
 
   /// Sets the current top index and tells people anbout the change.
   set currentTopDisplayIndex(int index) {
     _currentTopDisplayIndex = index;
+    print("shared cal index $index");
+
     _updateController.add(index);
   }
 

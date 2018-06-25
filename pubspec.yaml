@@ -1,6 +1,6 @@
 name: sliver_calendar
 description: Display a calendar view for flutter.
-version: 0.0.4
+version: 0.0.5
 author: David Bennett <pinkfishfrog@gmail.com>
 homepage: https://github.com/pinkfish/flutter_calendar
 
