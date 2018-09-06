@@ -82,8 +82,11 @@ class _CalendarDayMarkerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_radius == null) return;
-    canvas.drawCircle(_offset, _radius, new Paint()..color = _color);
+    if (_radius == null) {
+      return;
+    }
+      canvas.drawCircle(_offset, _radius, new Paint()..color = _color);
+
   }
 
   @override

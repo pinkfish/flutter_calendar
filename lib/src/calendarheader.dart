@@ -54,6 +54,7 @@ class CalendarHeaderState extends State<CalendarHeader>
     return new DateTime(index ~/ 12 + 1970, index % 12 + 1, 1);
   }
 
+  @override
   void initState() {
     super.initState();
     _monthIndex = monthIndexFromTime(new DateTime.now());
@@ -132,7 +133,7 @@ class CalendarHeaderState extends State<CalendarHeader>
                 constraints:
                     new BoxConstraints(minHeight: 230.0, maxHeight: 230.0),
                 child: new Dismissible(
-                  key: new ValueKey(_monthIndex),
+                  key: new ValueKey<int>(_monthIndex),
                   resizeDuration: null,
                   onDismissed: (DismissDirection direction) {
                     setState(() {
@@ -190,7 +191,7 @@ class CalendarHeaderState extends State<CalendarHeader>
         onTap: _handleOpen,
         child: new Row(
           mainAxisSize: MainAxisSize.max,
-          children: [
+          children: <Widget>[
             new Text(
               myExpandedState
                   ? MaterialLocalizations
@@ -227,7 +228,9 @@ class _CalendarEventIndicator extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_radius == null) return;
+    if (_radius == null)  {
+      return;
+      }
     canvas.drawCircle(new Offset(_radius, _radius), _radius,
         new Paint()..color = Colors.black);
   }
@@ -252,7 +255,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
 
   Widget _eventIndicator(Widget button, int eventIndex) {
     if (sharedState.events.containsKey(eventIndex)) {
-      List<Widget> eventIndicators = [];
+      List<Widget> eventIndicators = <Widget>[];
       for (CalendarEvent event in sharedState.events[eventIndex]) {
         eventIndicators.add(
           new SizedBox(
@@ -335,12 +338,12 @@ class _CalendarMonthDisplay extends StatelessWidget {
     DateTime topThird = topSecond.add(week);
     DateTime topFourth = topThird.add(week);
     DateTime topFifth = topFourth.add(week);
-    List<Widget> dayHeaders = [];
-    List<Widget> firstDays = [];
-    List<Widget> secondDays = [];
-    List<Widget> thirdDays = [];
-    List<Widget> fourthDays = [];
-    List<Widget> fifthDays = [];
+    List<Widget> dayHeaders = <Widget>[];
+    List<Widget> firstDays = <Widget>[];
+    List<Widget> secondDays = <Widget>[];
+    List<Widget> thirdDays = <Widget>[];
+    List<Widget> fourthDays = <Widget>[];
+    List<Widget> fifthDays = <Widget>[];
     ThemeData theme = Theme.of(context);
 
     for (int i = 0; i < 7; i++) {

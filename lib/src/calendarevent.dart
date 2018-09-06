@@ -24,7 +24,7 @@ abstract class CalendarSource {
   /// This is used to handle the [scroolToDay] call.
   ///
   void init(SliverScrollViewCalendarElement key) {
-    this.element = key;
+    element = key;
     initState();
   }
 
@@ -70,12 +70,11 @@ enum CalendarViewType { Schedule, Week, Month }
 /// about how to render it and display it.
 ///
 class CalendarEvent {
-  CalendarEvent(
-      {@required this.index,
-      @required TZDateTime instant,
-      @required TZDateTime instantEnd})
-      : this.instant = instant,
-        _instantEnd = instantEnd;
+  CalendarEvent({
+    @required this.index,
+    @required this.instant,
+    @required TZDateTime instantEnd,
+  }) : _instantEnd = instantEnd;
   TZDateTime instant;
   TZDateTime _instantEnd;
   int index;

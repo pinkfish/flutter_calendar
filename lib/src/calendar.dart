@@ -62,7 +62,7 @@ class CalendarWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         new CalendarHeader(coordinationKey, bannerHeader, location),
         new Expanded(
           child: new WrappedScrollViewCalendar(

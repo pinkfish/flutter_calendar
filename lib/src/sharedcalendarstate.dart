@@ -11,7 +11,7 @@ import 'sliverlistcalendar.dart';
 ///
 class SharedCalendarState {
   int _currentTopDisplayIndex;
-  Map<int, List<CalendarEvent>> events = {};
+  Map<int, List<CalendarEvent>> events = <int, List<CalendarEvent>>{};
   Location location;
   CalendarSource source;
   StreamController<int> _updateController = new StreamController<int>();
@@ -105,7 +105,7 @@ class SharedCalendarState {
           if (sliceIndex != i) {
             events[curIndex] = rawEvents.sublist(sliceIndex, i);
           } else {
-            events[curIndex] = [rawEvents[sliceIndex]];
+            events[curIndex] = <CalendarEvent>[rawEvents[sliceIndex]];
           }
           curIndex = index;
           sliceIndex = i;
@@ -117,7 +117,8 @@ class SharedCalendarState {
     }
   }
 
-  static Map<String, SharedCalendarState> _data = {};
+  static Map<String, SharedCalendarState> _data =
+      <String, SharedCalendarState>{};
 
   ///
   /// Gets the shared calendar state for this specific co-ordination key.

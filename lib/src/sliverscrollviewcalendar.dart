@@ -115,6 +115,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
     });
   }
 
+  @override
   void updateEvents() {
     // Now do stuff with our events.
     _sharedState.updateEvents(_startWindow, _endWindow);
@@ -158,7 +159,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
                 print('No current child! $currentChild');
                 break;
               }
-              parentData = currentChild.parentData;
+              parentData = currentChild.parentData as SliverMultiBoxAdaptorParentData;
               print('finding index ${parentData.index} $currentChild');
             } while (parentData.index != scrollToIndex);
             if (parentData != null && parentData.index == scrollToIndex) {
@@ -211,7 +212,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
         TextStyle style = Theme.of(context).textTheme.subhead.copyWith(
               fontWeight: FontWeight.w300,
             );
-        List<Widget> displayEvents = [];
+        List<Widget> displayEvents = <Widget>[];
         if (index == _nowIndex) {
           TZDateTime nowTime = new TZDateTime.now(_currentLocation);
           style.copyWith(color: Theme.of(context).accentColor);
@@ -256,7 +257,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+          children: <Widget>[
             new Container(
               constraints: new BoxConstraints.tightFor(width: widthFirst),
               margin: new EdgeInsets.only(top: 5.0, left: inset),
@@ -264,7 +265,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   new Text(
                     dayOfWeekFormat.format(day),
                     style: style,
@@ -292,8 +293,9 @@ class SliverScrollViewCalendarElement extends StatelessElement
         int startIndex = index;
         DateTime start = time;
         // Show day/month headers
-        if (!_sharedState.events.containsKey(CalendarEvent
-                .indexFromMilliseconds(time.add(oneDay), _currentLocation)) ||
+        if (!_sharedState.events.containsKey(
+                CalendarEvent.indexFromMilliseconds(
+                    time.add(oneDay), _currentLocation)) ||
             !_sharedState.events.containsKey(
                 CalendarEvent.indexFromMilliseconds(
                     time.subtract(oneDay), _currentLocation))) {
@@ -478,21 +480,11 @@ class SliverScrollViewCalendarElement extends StatelessElement
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-  }
-
-  @override
   void unmount() {
     super.unmount();
     _sharedState.source.dispose();
     _topIndexChangedSubscription?.cancel();
     _topIndexChangedSubscription = null;
-  }
-
-  @override
-  InheritedWidget inheritFromWidgetOfExactType(Type targetType) {
-    return super.inheritFromWidgetOfExactType(targetType);
   }
 }
 
@@ -503,14 +495,14 @@ class SliverScrollViewCalendar extends ScrollView {
   final String calendarKey;
   final ImageProvider monthHeader;
 
-  SliverScrollViewCalendar(
-      {@required this.initialDate,
-      this.view = CalendarViewType.Schedule,
-      this.location,
-      @required double initialScrollOffset,
-      @required this.calendarKey,
-      @required this.monthHeader})
-      : super(
+  SliverScrollViewCalendar({
+    @required this.initialDate,
+    @required double initialScrollOffset,
+    @required this.calendarKey,
+    @required this.monthHeader,
+    this.view = CalendarViewType.Schedule,
+    this.location,
+  }) : super(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             controller: new ScrollController(
@@ -518,6 +510,7 @@ class SliverScrollViewCalendar extends ScrollView {
     SharedCalendarState.get(calendarKey).controller = controller;
   }
 
+  @override
   SliverScrollViewCalendarElement createElement() =>
       new SliverScrollViewCalendarElement(this);
 
@@ -538,13 +531,14 @@ class WrappedScrollViewCalendar extends StatefulWidget {
   final double initialScrollOffset;
   final ImageProvider monthHeader;
 
-  WrappedScrollViewCalendar(
-      {@required this.initialDate,
-      this.view = CalendarViewType.Schedule,
-      this.location,
-      @required this.initialScrollOffset,
-      @required this.calendarKey,
-      @required this.monthHeader});
+  WrappedScrollViewCalendar({
+    @required this.initialDate,
+    @required this.initialScrollOffset,
+    @required this.calendarKey,
+    @required this.monthHeader,
+    this.view = CalendarViewType.Schedule,
+    this.location,
+  });
 
   @override
   WrapperScrollViewCalendarState createState() {
@@ -556,6 +550,7 @@ class WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
   SharedCalendarState _sharedCalendarState;
   StreamSubscription<bool> _onHeaderExpandChange;
 
+  @override
   void initState() {
     super.initState();
     _sharedCalendarState = SharedCalendarState.get(widget.calendarKey);
@@ -565,6 +560,7 @@ class WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
     });
   }
 
+  @override
   void dispose() {
     super.dispose();
     _onHeaderExpandChange?.cancel();
@@ -575,6 +571,7 @@ class WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
     _sharedCalendarState.headerExpanded = false;
   }
 
+  @override
   Widget build(BuildContext context) {
     return new InkWell(
       onTap: _sharedCalendarState.headerExpanded
