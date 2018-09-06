@@ -5,6 +5,7 @@ import 'calendarevent.dart';
 import 'dart:async';
 import 'sliverlistcalendar.dart';
 
+
 ///
 /// Keeps track of the shared calendar state across all the various pieces
 /// of the calendar system that need the shared calendar state.

@@ -7,6 +7,36 @@ import 'calendarevent.dart';
 
 const Duration _kExpand = const Duration(milliseconds: 200);
 
+
+///
+/// This function will be called to generate a day in the header.  By
+/// default it does this.  Which is overlaid by the event indicators.
+/// button = new Center(
+///        child: new FlatButton(
+///          color: day.isAtSameMomentAs(nowTime)
+///              ? theme.accentColor
+///              : day.isAtSameMomentAs(displayDate)
+///                  ? Colors.grey.shade200
+///                  : Colors.white,
+///          shape: new CircleBorder(),
+///          child: new Text(day.day.toString()),
+///          onPressed: () => sharedState.source.scrollToDay(day),
+///          padding: EdgeInsets.zero,
+///        ),
+///      );
+///
+typedef HeaderDayIndicator = Widget Function(
+    ThemeData theme, DateTime day, DateTime nowTime);
+
+///
+/// Generates the small boxes on the calendar to indicate that there are events
+/// on this specific day.  It creates a stack and then puts in the main day
+/// button inside the stack with the event indicators overlaid on top of it.
+/// The calendar events are the events on this day.  It can be an empty array.
+///
+typedef EventIndicator = Widget Function(
+    Widget button, List<CalendarEvent> events);
+
 ///
 /// Displays the header for the calendar.  This handles the title with the
 /// month/year and a drop down item as well as opening to show the whole month.
@@ -15,13 +45,27 @@ class CalendarHeader extends StatefulWidget {
   final Location _location;
   final String calendarKey;
   final ImageProvider bannerHeader;
+  final Color color;
+  final TextStyle headerStyle;
+  final EventIndicator eventIndicator;
+  final HeaderDayIndicator dayIndicator;
 
   ///
   /// Creates the calendar header.  [calendarKey] is the key to find the shared
   /// state from.  [location] to use for the calendar.
   ///
-  CalendarHeader(this.calendarKey, this.bannerHeader, Location location)
-      : _location = location ?? local;
+  /// See [EventIndicator] and [HeaderDayIndicator] for details on how the
+  /// day and event indicators can be customized.
+  ///
+  CalendarHeader(
+    this.calendarKey,
+    this.bannerHeader,
+    Location location,
+    this.color,
+    this.headerStyle,
+    this.dayIndicator,
+    this.eventIndicator,
+  ) : _location = location ?? local;
 
   @override
   State createState() {
@@ -147,6 +191,8 @@ class CalendarHeaderState extends State<CalendarHeader>
                     sharedState,
                     widget._location,
                     monthToShow(_monthIndex),
+                    widget.dayIndicator,
+                    widget.eventIndicator,
                   ),
                 ),
               ),
@@ -161,7 +207,7 @@ class CalendarHeaderState extends State<CalendarHeader>
   Widget build(BuildContext context) {
     return new Material(
       elevation: 4.0,
-      color: Colors.white,
+      color: widget.color ?? Colors.white,
       child: new AnimatedBuilder(
         animation: _controller,
         builder: _buildChildren,
@@ -180,7 +226,7 @@ class CalendarHeaderState extends State<CalendarHeader>
     return new Container(
       padding: new EdgeInsets.only(top: 8.0, left: 5.0, bottom: 8.0),
       decoration: new BoxDecoration(
-        color: Colors.white,
+        color: widget.color ?? Colors.white,
         image: new DecorationImage(
           image: widget.bannerHeader,
           fit: BoxFit.fitHeight,
@@ -198,7 +244,8 @@ class CalendarHeaderState extends State<CalendarHeader>
                       .formatMonthYear(monthToShow(_monthIndex))
                   : MaterialLocalizations.of(context)
                       .formatMonthYear(currentTop),
-              style: Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
+              style: widget.headerStyle ??
+                  Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
             ),
             new RotationTransition(
               turns: _iconTurns,
@@ -246,13 +293,19 @@ class _CalendarMonthDisplay extends StatelessWidget {
   final SharedCalendarState sharedState;
   final Location location;
   final DateTime displayDate;
+  final HeaderDayIndicator dayIndicator;
+  final EventIndicator eventIndicator;
 
   static const Duration week = const Duration(days: 7);
 
-  _CalendarMonthDisplay(this.sharedState, this.location, this.displayDate);
+  _CalendarMonthDisplay(this.sharedState, this.location, this.displayDate,
+      this.dayIndicator, this.eventIndicator);
 
   Widget _eventIndicator(Widget button, int eventIndex) {
     if (sharedState.events.containsKey(eventIndex)) {
+      if (eventIndicator != null) {
+        return eventIndicator(button, sharedState.events[eventIndex]);
+      }
       List<Widget> eventIndicators = <Widget>[];
       for (CalendarEvent event in sharedState.events[eventIndex]) {
         eventIndicators.add(
@@ -289,6 +342,9 @@ class _CalendarMonthDisplay extends StatelessWidget {
         ),
       );
     } else {
+      if (eventIndicator != null) {
+        return eventIndicator(button, <CalendarEvent>[]);
+      }
       return new SizedBox(
         width: 40.0,
         height: 40.0,
@@ -303,19 +359,23 @@ class _CalendarMonthDisplay extends StatelessWidget {
     if (day.month != displayDate.month) {
       button = new SizedBox(width: 1.0);
     } else {
-      button = new Center(
-        child: new FlatButton(
-          color: day.isAtSameMomentAs(nowTime)
-              ? theme.accentColor
-              : day.isAtSameMomentAs(displayDate)
-                  ? Colors.grey.shade200
-                  : Colors.white,
-          shape: new CircleBorder(),
-          child: new Text(day.day.toString()),
-          onPressed: () => sharedState.source.scrollToDay(day),
-          padding: EdgeInsets.zero,
-        ),
-      );
+      if (dayIndicator != null) {
+        button = dayIndicator(theme, day, nowTime);
+      } else {
+        button = new Center(
+          child: new FlatButton(
+            color: day.isAtSameMomentAs(nowTime)
+                ? theme.accentColor
+                : day.isAtSameMomentAs(displayDate)
+                    ? Colors.grey.shade200
+                    : Colors.white,
+            shape: new CircleBorder(),
+            child: new Text(day.day.toString()),
+            onPressed: () => sharedState.source.scrollToDay(day),
+            padding: EdgeInsets.zero,
+          ),
+        );
+      }
     }
     int eventIndex = CalendarEvent.indexFromMilliseconds(day, location);
     return _eventIndicator(button, eventIndex);

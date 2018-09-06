@@ -22,11 +22,17 @@ class CalendarWidget extends StatelessWidget {
   final String coordinationKey;
   final ImageProvider monthHeader;
   final ImageProvider bannerHeader;
-
+  final Color headerColor;
+  final TextStyle headerMonthStyle;
+  final Widget header;
   ///
   /// Creates a calendar widget in place.  The [initialDate] is the date
   /// which will be used to show the first calendar in the list.  The
   /// [source] is used to get the events from.
+  ///
+  /// The [header] object can be used to completely customise the header used
+  /// in the calendar.  It defaults to making one based on the [CalendarHeader]
+  /// class.
   ///
   /// The [location] will set itself to the local location if it not set.  The
   /// calendarKey is used to co-ordinate all the pieces of the calendar across
@@ -37,16 +43,19 @@ class CalendarWidget extends StatelessWidget {
   /// if this is not set then the offset is so the microseconds since the epoc
   /// based on the initial date.
   ///
-  CalendarWidget(
-      {@required this.initialDate,
-      @required this.source,
-      @required this.bannerHeader,
-      @required this.monthHeader,
-      this.view = CalendarViewType.Schedule,
-      Location location,
-      String calendarKey,
-      double initialScrollOffset})
-      : location = location ?? local,
+  CalendarWidget({
+    @required this.initialDate,
+    @required this.source,
+    @required this.bannerHeader,
+    @required this.monthHeader,
+    this.view = CalendarViewType.Schedule,
+    Location location,
+    String calendarKey,
+    double initialScrollOffset,
+    this.headerColor,
+    this.headerMonthStyle,
+    this.header,
+  })  : location = location ?? local,
         coordinationKey = calendarKey ?? "calendarwidget",
         initialScrollOffset = initialScrollOffset ??
             new DateTime.now().microsecondsSinceEpoch.toDouble(),
@@ -63,15 +72,17 @@ class CalendarWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        new CalendarHeader(coordinationKey, bannerHeader, location),
+        header ?? new CalendarHeader(coordinationKey, bannerHeader, location, headerColor,
+            headerMonthStyle, null, null),
         new Expanded(
           child: new WrappedScrollViewCalendar(
-              initialDate: initialDate,
-              initialScrollOffset: initialScrollOffset,
-              view: view,
-              location: location,
-              monthHeader: monthHeader,
-              calendarKey: coordinationKey),
+            initialDate: initialDate,
+            initialScrollOffset: initialScrollOffset,
+            view: view,
+            location: location,
+            monthHeader: monthHeader,
+            calendarKey: coordinationKey,
+          ),
         ),
       ],
     );
