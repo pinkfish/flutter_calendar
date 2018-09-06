@@ -194,11 +194,9 @@ class CalendarHeaderState extends State<CalendarHeader>
           children: <Widget>[
             new Text(
               myExpandedState
-                  ? MaterialLocalizations
-                      .of(context)
+                  ? MaterialLocalizations.of(context)
                       .formatMonthYear(monthToShow(_monthIndex))
-                  : MaterialLocalizations
-                      .of(context)
+                  : MaterialLocalizations.of(context)
                       .formatMonthYear(currentTop),
               style: Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
             ),
@@ -228,9 +226,9 @@ class _CalendarEventIndicator extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_radius == null)  {
+    if (_radius == null) {
       return;
-      }
+    }
     canvas.drawCircle(new Offset(_radius, _radius), _radius,
         new Paint()..color = Colors.black);
   }
@@ -353,8 +351,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
           height: 20.0,
           child: new Center(
             child: new Text(
-              MaterialLocalizations
-                  .of(context)
+              MaterialLocalizations.of(context)
                   .narrowWeekdays[topFirst.weekday % 7],
             ),
           ),

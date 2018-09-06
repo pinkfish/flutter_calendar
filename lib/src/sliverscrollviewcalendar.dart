@@ -159,7 +159,8 @@ class SliverScrollViewCalendarElement extends StatelessElement
                 print('No current child! $currentChild');
                 break;
               }
-              parentData = currentChild.parentData as SliverMultiBoxAdaptorParentData;
+              parentData =
+                  currentChild.parentData as SliverMultiBoxAdaptorParentData;
               print('finding index ${parentData.index} $currentChild');
             } while (parentData.index != scrollToIndex);
             if (parentData != null && parentData.index == scrollToIndex) {

@@ -85,8 +85,7 @@ class _CalendarDayMarkerPainter extends CustomPainter {
     if (_radius == null) {
       return;
     }
-      canvas.drawCircle(_offset, _radius, new Paint()..color = _color);
-
+    canvas.drawCircle(_offset, _radius, new Paint()..color = _color);
   }
 
   @override

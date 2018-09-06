@@ -34,12 +34,11 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
   /// the main axis.
   ///
   /// The [childManager] argument must not be null.
-  RenderSliverCenterList(
-      {@required RenderSliverBoxChildManager childManager,
-        @required this.sharedState,
-      this.startIndex = 0,
-      })
-      : super(childManager: childManager);
+  RenderSliverCenterList({
+    @required RenderSliverBoxChildManager childManager,
+    @required this.sharedState,
+    this.startIndex = 0,
+  }) : super(childManager: childManager);
 
   final int startIndex;
   final SharedCalendarState sharedState;
@@ -363,8 +362,9 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
     SliverMultiBoxAdaptorParentData childParentData = firstChild.parentData;
     geometry = new SliverGeometry(
-      scrollOffsetCorrection:
-          forceScrollUpdate ? childParentData.layoutOffset - scrollOffset : null,
+      scrollOffsetCorrection: forceScrollUpdate
+          ? childParentData.layoutOffset - scrollOffset
+          : null,
       scrollExtent: estimatedMaxScrollOffset,
       paintExtent: paintExtent,
       maxPaintExtent: estimatedMaxScrollOffset,
@@ -392,7 +392,6 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 class SliverListCenter extends SliverMultiBoxAdaptorWidget {
   /// Creates a sliver that places box children in a linear array.
   const SliverListCenter({
-
     @required this.calendarKey,
     @required SliverChildDelegate delegate,
     @required this.controller,
