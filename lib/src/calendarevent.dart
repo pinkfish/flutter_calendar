@@ -8,6 +8,7 @@ const Duration oneDay = const Duration(days: 1);
 ///
 /// The source for the calendar, this is where to get all the events from.
 ///
+/*
 abstract class CalendarSource {
   SliverScrollViewCalendarElement element;
 
@@ -38,6 +39,12 @@ abstract class CalendarSource {
   }
 
   ///
+  /// Called when the source is update by a widget redo.
+  ///
+  void didUpdateSource(CalendarSource source) {
+  }
+
+  ///
   /// Updates the events queue to rebuild the display.
   ///
   void updateEvents() {
@@ -54,6 +61,7 @@ abstract class CalendarSource {
   ///
   void dispose();
 }
+*/
 
 abstract class CalendarEventElement {
   void updateEvents();

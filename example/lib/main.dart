@@ -43,7 +43,40 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  CalendarSource source;
+  List<CalendarEvent> events = <CalendarEvent>[];
+  Location loc;
+  Random random = new Random();
+
+  void initState() {
+    super.initState();
+  }
+
+  Widget buildItem(BuildContext context, CalendarEvent e) {
+    return new Card(
+      child: new ListTile(
+        title: new Text("Event ${e.index}"),
+        subtitle: new Text("Yay for events"),
+        leading: const Icon(Icons.gamepad),
+      ),
+    );
+  }
+
+  List<CalendarEvent> getEvents(DateTime start, DateTime end) {
+    if (loc != null && events.length == 0) {
+      TZDateTime nowTime =
+      new TZDateTime.now(loc).subtract(new Duration(days: 5));
+      for (int i = 0; i < 20; i++) {
+        TZDateTime start =
+        nowTime.add(new Duration(days: i + random.nextInt(10)));
+        events.add(new CalendarEvent(
+            index: i,
+            instant: start,
+            instantEnd: start.add(new Duration(minutes: 30))));
+      }
+    }
+    return events;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,19 +86,18 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Column(
         children: <Widget>[
-          new FutureBuilder(
+          new FutureBuilder<String>(
             future: FlutterNativeTimezone.getLocalTimezone(),
             builder: (BuildContext context, AsyncSnapshot<String> tz) {
               if (tz.hasData) {
-                Location loc = getLocation(tz.data);
-                if (source == null) {
-                  source = new CalendarEventSource(loc);
-                }
+                 loc = getLocation(tz.data);
+
                 return new Expanded(
                   child: new CalendarWidget(
                     initialDate: new TZDateTime.now(loc),
                     location: loc,
-                    source: source,
+                    buildItem: buildItem,
+                    getEvents: getEvents,
                     bannerHeader:
                         new AssetImage("assets/images/calendarheader.jpg"),
                     monthHeader:
@@ -80,47 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CalendarEventSource extends CalendarSource {
-  List<CalendarEvent> events = [];
-  final Location loc;
-  Random random = new Random();
-
-  CalendarEventSource(this.loc);
-
-  @override
-  List<CalendarEvent> getEvents(DateTime start, DateTime end) {
-    return events;
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  void initState() {
-    TZDateTime nowTime =
-        new TZDateTime.now(loc).subtract(new Duration(days: 5));
-    for (int i = 0; i < 20; i++) {
-      TZDateTime start =
-          nowTime.add(new Duration(days: i + random.nextInt(10)));
-      events.add(new CalendarEvent(
-          index: i,
-          instant: start,
-          instantEnd: start.add(new Duration(minutes: 30))));
-    }
-  }
-
-  @override
-  Widget buildWidget(BuildContext context, CalendarEvent index) {
-    return new Card(
-      child: new ListTile(
-        title: new Text("Event ${index.index}"),
-        subtitle: new Text("Yay for events"),
-        leading: const Icon(Icons.gamepad),
       ),
     );
   }

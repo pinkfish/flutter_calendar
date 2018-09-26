@@ -5,26 +5,35 @@ import 'package:timezone/timezone.dart';
 import 'calendarheader.dart';
 import 'calendarevent.dart';
 export 'calendarevent.dart';
-import 'sharedcalendarstate.dart';
 import 'sliverscrollviewcalendar.dart';
+import 'sliverlistcalendar.dart';
+import 'dart:async';
+
+typedef List<CalendarEvent> CalendarEventBuiler(DateTime start, DateTime end);
+
+///
+/// The widget for the specific calendar event, this is what to render
+/// when showing the calendar event.
+///
+typedef Widget CalendarWidgetBuilder(BuildContext context, CalendarEvent index);
 
 ///
 /// The widget to show the calendar with a header that displays the
 /// current month, drop down and then the events in a sliverlist.
 ///
-class CalendarWidget extends StatelessWidget {
+class CalendarWidget extends StatefulWidget {
   final TZDateTime initialDate;
-  final CalendarSource source;
   final CalendarViewType view;
   final Location location;
   final double initialScrollOffset;
-  final SharedCalendarState sharedState;
-  final String coordinationKey;
+  final CalendarEventBuiler getEvents;
+  final CalendarWidgetBuilder buildItem;
   final ImageProvider monthHeader;
   final ImageProvider bannerHeader;
   final Color headerColor;
   final TextStyle headerMonthStyle;
   final Widget header;
+
   ///
   /// Creates a calendar widget in place.  The [initialDate] is the date
   /// which will be used to show the first calendar in the list.  The
@@ -45,9 +54,11 @@ class CalendarWidget extends StatelessWidget {
   ///
   CalendarWidget({
     @required this.initialDate,
-    @required this.source,
     @required this.bannerHeader,
     @required this.monthHeader,
+    @required this.buildItem,
+    @required this.getEvents,
+    Key key,
     this.view = CalendarViewType.Schedule,
     Location location,
     String calendarKey,
@@ -56,14 +67,140 @@ class CalendarWidget extends StatelessWidget {
     this.headerMonthStyle,
     this.header,
   })  : location = location ?? local,
-        coordinationKey = calendarKey ?? "calendarwidget",
         initialScrollOffset = initialScrollOffset ??
             new DateTime.now().microsecondsSinceEpoch.toDouble(),
-        sharedState = SharedCalendarState.createState(
-            calendarKey ?? "calendarwidget",
-            source,
-            initialDate,
-            location ?? local);
+        super(key: key);
+
+  @override
+  State createState() {
+    return CalendarWidgetState();
+  }
+}
+
+class CalendarWidgetState extends State<CalendarWidget> {
+  int _currentTopDisplayIndex;
+  Map<int, List<CalendarEvent>> events = <int, List<CalendarEvent>>{};
+  Location location;
+  StreamController<int> _updateController = new StreamController<int>();
+  StreamController<bool> _headerExpandController = new StreamController<bool>();
+  Stream<bool> _headerBroadcastStream;
+  Stream<int> _indexBroadcastStream;
+  RenderSliverCenterList renderSliverList;
+  ScrollController controller;
+  bool _headerExpanded = false;
+  SliverScrollViewCalendarElement element;
+
+  void initState() {
+    super.initState();
+    currentTopDisplayIndex = widget.initialDate.millisecondsSinceEpoch ~/
+        Duration.millisecondsPerDay;
+  }
+
+  /// Sets the current top index and tells people anbout the change.
+  set currentTopDisplayIndex(int index) {
+    _currentTopDisplayIndex = index;
+
+    _updateController.add(index);
+  }
+
+  /// Update if the header is expanded and tell people about the change.
+  set headerExpanded(bool expanded) {
+    if (expanded != _headerExpanded) {
+      _headerExpanded = expanded;
+      _headerExpandController.add(expanded);
+    }
+  }
+
+  /// If the header is currently expanded or not.
+  bool get headerExpanded => _headerExpanded;
+
+  /// The index of the current display, this is the display index and not
+  /// the index into the events.
+  int get currentTopDisplayIndex => _currentTopDisplayIndex;
+
+  ///
+  /// Broadcast stream to let the various elements know about the current
+  /// top of the display.
+  ///
+  Stream<int> get indexChangeStream {
+    if (_indexBroadcastStream == null) {
+      _indexBroadcastStream = _updateController.stream.asBroadcastStream();
+    }
+    return _indexBroadcastStream;
+  }
+
+  /// Broadcast stream that is updated with the current state of the header
+  /// when it changes.
+  Stream<bool> get headerExpandedChangeStream {
+    if (_headerBroadcastStream == null) {
+      _headerBroadcastStream =
+          _headerExpandController.stream.asBroadcastStream();
+    }
+    return _headerBroadcastStream;
+  }
+
+  void dispose() {
+    _updateController?.close();
+    _updateController = null;
+    _headerExpandController?.close();
+    _headerExpandController = null;
+    _headerBroadcastStream = null;
+  }
+
+  ///
+  /// Updates the events in the given time range by pulling from the
+  /// source and updating the indexes in the events mapping.
+  ///
+  void updateInternalEvents(TZDateTime startWindow, TZDateTime endWindow) {
+    List<CalendarEvent> rawEvents = widget.getEvents(startWindow, endWindow);
+    rawEvents.sort(
+        (CalendarEvent e, CalendarEvent e2) => e.instant.compareTo(e2.instant));
+    // Make sure we clean up the old indexes when we update.
+    events.clear();
+    if (rawEvents.length > 0) {
+      int curIndex =
+          CalendarEvent.indexFromMilliseconds(rawEvents[0].instant, location);
+      int sliceIndex = 0;
+      // Get the offsets into the array.
+      for (int i = 1; i < rawEvents.length; i++) {
+        int index =
+            CalendarEvent.indexFromMilliseconds(rawEvents[i].instant, location);
+        if (index != curIndex) {
+          if (sliceIndex != i) {
+            events[curIndex] = rawEvents.sublist(sliceIndex, i);
+          } else {
+            events[curIndex] = <CalendarEvent>[rawEvents[sliceIndex]];
+          }
+          curIndex = index;
+          sliceIndex = i;
+        }
+      }
+      if (sliceIndex != rawEvents.length) {
+        events[curIndex] = rawEvents.sublist(sliceIndex);
+      }
+    }
+  }
+
+  //static Map<String, SharedCalendarState> _data =
+  //<String, SharedCalendarState>{};
+
+  ///
+  /// Creates the calendar state for the specific co-ordination key.
+  ///
+  /*
+  static SharedCalendarState createState(String coordinationKey,
+      CalendarSource source, TZDateTime currentTop, Location location) {
+    if (_data.containsKey(coordinationKey)) {
+      // Update the source into the new shared state and fix the elemet.
+      CalendarSource old = _data[coordinationKey].source;
+      _data[coordinationKey].source = source;
+      source.init(old.element);
+      source.didUpdateSource(old);
+      return _data[coordinationKey];
+    }
+    return _data[coordinationKey];
+  }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -72,19 +209,37 @@ class CalendarWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        header ?? new CalendarHeader(coordinationKey, bannerHeader, location, headerColor,
-            headerMonthStyle, null, null),
+        widget.header ??
+            new CalendarHeader(this, widget.bannerHeader, widget.location,
+                widget.headerColor, widget.headerMonthStyle, null, null),
         new Expanded(
           child: new WrappedScrollViewCalendar(
-            initialDate: initialDate,
-            initialScrollOffset: initialScrollOffset,
-            view: view,
-            location: location,
-            monthHeader: monthHeader,
-            calendarKey: coordinationKey,
+            state: this,
+            initialDate: widget.initialDate,
+            initialScrollOffset: widget.initialScrollOffset,
+            view: widget.view,
+            location: widget.location,
+            monthHeader: widget.monthHeader,
           ),
         ),
       ],
     );
+  }
+
+  ///
+  /// Scrolls the calendar to the specific datetime set here.  Note
+  /// we only use the month/day/year for this.  The milliseconds is
+  /// *not* correct and not in local time.
+  ///
+  void scrollToDay(DateTime time) {
+    element.scrollToDate(time);
+  }
+
+  ///
+  /// Update the events on the screen when things change.
+  /// This causes the system to re-ask for the events.
+  ///
+  void updateEvents() {
+    element.updateEvents();
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'sharedcalendarstate.dart';
+import 'calendar.dart';
 
 /// A sliver that places multiple box children in a linear array along the main
 /// axis.
@@ -36,12 +36,12 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
   /// The [childManager] argument must not be null.
   RenderSliverCenterList({
     @required RenderSliverBoxChildManager childManager,
-    @required this.sharedState,
+    @required this.state,
     this.startIndex = 0,
   }) : super(childManager: childManager);
 
   final int startIndex;
-  final SharedCalendarState sharedState;
+  final CalendarWidgetState state;
   int newTopScrollIndex;
 
   @override
@@ -195,7 +195,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
                   childParentData.layoutOffset - scrollOffset,
             );
           }
-          print('$geometry $scrollOffset ${childParentData.layoutOffset}');
+          debugPrint('$geometry $scrollOffset ${childParentData.layoutOffset}');
           return;
         }
       }
@@ -214,7 +214,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     if (earliestUsefulChild != null) {
       final SliverMultiBoxAdaptorParentData parentData =
           earliestUsefulChild.parentData;
-      sharedState?.currentTopDisplayIndex = parentData.index ~/ 2;
+      state?.currentTopDisplayIndex = parentData.index ~/ 2;
     }
 
     // Make sure we've laid out at least one child.
@@ -296,7 +296,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
       // Check here to see if we should drop out because we hit the endpoint.
       if (newTopScrollIndex != null) {
         SliverMultiBoxAdaptorParentData childParentData = lastChild.parentData;
-        print(
+        debugPrint(
             'top scroll offset! 2 $newTopScrollIndex ${childParentData.index}');
         if (childParentData.index == newTopScrollIndex) {
           newTopScrollIndex = null;
@@ -310,7 +310,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           }
           // Force it to layout down to the bottom of this page.
           targetEndScrollOffset = endScrollOffset + remainingPaintExtent;
-          print('$geometry $scrollOffset ${childParentData.layoutOffset}');
+          debugPrint('$geometry $scrollOffset ${childParentData.layoutOffset}');
           forceScrollUpdate = true;
           break;
         }
@@ -392,9 +392,9 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 class SliverListCenter extends SliverMultiBoxAdaptorWidget {
   /// Creates a sliver that places box children in a linear array.
   const SliverListCenter({
-    @required this.calendarKey,
     @required SliverChildDelegate delegate,
     @required this.controller,
+    @required this.state,
     Key key,
     this.startIndex = 0,
   }) : super(key: key, delegate: delegate);
@@ -402,18 +402,17 @@ class SliverListCenter extends SliverMultiBoxAdaptorWidget {
   @override
   RenderSliverCenterList createRenderObject(BuildContext context) {
     final SliverMultiBoxAdaptorElement element = context;
-    SharedCalendarState sharedState = SharedCalendarState.get(calendarKey);
     RenderSliverCenterList ret = new RenderSliverCenterList(
         childManager: element,
         startIndex: startIndex,
-        sharedState: sharedState);
-    sharedState.renderSliverList = ret;
+        state: state);
+    state.renderSliverList = ret;
     return ret;
   }
 
   final int startIndex;
-  final String calendarKey;
   final ScrollController controller;
+  final CalendarWidgetState state;
 
   /// Returns an estimate of the max scroll extent for all the children.
   ///

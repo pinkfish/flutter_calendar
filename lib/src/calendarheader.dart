@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timezone/timezone.dart';
 import 'dart:async';
-import 'sharedcalendarstate.dart';
 import 'calendarevent.dart';
+import 'calendar.dart';
 
 const Duration _kExpand = const Duration(milliseconds: 200);
 
@@ -43,7 +43,7 @@ typedef EventIndicator = Widget Function(
 ///
 class CalendarHeader extends StatefulWidget {
   final Location _location;
-  final String calendarKey;
+  final CalendarWidgetState state;
   final ImageProvider bannerHeader;
   final Color color;
   final TextStyle headerStyle;
@@ -58,7 +58,7 @@ class CalendarHeader extends StatefulWidget {
   /// day and event indicators can be customized.
   ///
   CalendarHeader(
-    this.calendarKey,
+    this.state,
     this.bannerHeader,
     Location location,
     this.color,
@@ -83,7 +83,7 @@ class CalendarHeaderState extends State<CalendarHeader>
   StreamSubscription<int> _subscription;
   StreamSubscription<bool> _headerExpandedSubscription;
   StreamSubscription<int> _indexChangeSubscription;
-  SharedCalendarState sharedState;
+  //SharedCalendarState sharedState;
   AnimationController _controller;
   CurvedAnimation _easeInAnimation;
   Animation<double> _iconTurns;
@@ -103,15 +103,15 @@ class CalendarHeaderState extends State<CalendarHeader>
     super.initState();
     _monthIndex = monthIndexFromTime(new DateTime.now());
     _controller = new AnimationController(duration: _kExpand, vsync: this);
-    sharedState = SharedCalendarState.get(widget.calendarKey);
+    //sharedState = SharedCalendarState.get(widget.calendarKey);
     _easeInAnimation =
         new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _iconTurns =
         new Tween<double>(begin: 0.0, end: 0.5).animate(_easeInAnimation);
     _indexChangeSubscription =
-        sharedState.indexChangeStream.listen((int newTop) {
+        widget.state.indexChangeStream.listen((int newTop) {
       setState(() {
-        int ms = (sharedState.currentTopDisplayIndex + 1) *
+        int ms = (widget.state.currentTopDisplayIndex + 1) *
             Duration.millisecondsPerDay;
         DateTime currentTopTemp = new DateTime.fromMillisecondsSinceEpoch(ms);
 
@@ -119,7 +119,7 @@ class CalendarHeaderState extends State<CalendarHeader>
       });
     });
     _headerExpandedSubscription =
-        sharedState.headerExpandedChangeStream.listen((bool change) {
+        widget.state.headerExpandedChangeStream.listen((bool change) {
       if (myExpandedState != change) {
         setState(() {
           myExpandedState = change;
@@ -157,10 +157,10 @@ class CalendarHeaderState extends State<CalendarHeader>
   void _handleOpen() {
     setState(() {
       // Jump the page controller to the right spot.
-      myExpandedState = !sharedState.headerExpanded;
-      sharedState.headerExpanded = myExpandedState;
+      myExpandedState = !widget.state.headerExpanded;
+      widget.state.headerExpanded = myExpandedState;
       _doAnimation();
-      PageStorage.of(context)?.writeState(context, sharedState.headerExpanded);
+      PageStorage.of(context)?.writeState(context, widget.state..headerExpanded);
     });
   }
 
@@ -184,11 +184,11 @@ class CalendarHeaderState extends State<CalendarHeader>
                       _monthIndex +=
                           direction == DismissDirection.endToStart ? 1 : -1;
                       // Update the current scroll pos too.
-                      sharedState.source.scrollToDay(monthToShow(_monthIndex));
+                      widget.state.scrollToDay(monthToShow(_monthIndex));
                     });
                   },
                   child: new _CalendarMonthDisplay(
-                    sharedState,
+                    widget.state,
                     widget._location,
                     monthToShow(_monthIndex),
                     widget.dayIndicator,
@@ -218,7 +218,7 @@ class CalendarHeaderState extends State<CalendarHeader>
 
   Widget _buildCurrentHeader(BuildContext context) {
     int ms =
-        (sharedState.currentTopDisplayIndex + 1) * Duration.millisecondsPerDay;
+        (widget.state.currentTopDisplayIndex + 1) * Duration.millisecondsPerDay;
     DateTime currentTopTemp = new DateTime.fromMillisecondsSinceEpoch(ms);
     DateTime currentTop = new DateTime(
         currentTopTemp.year, currentTopTemp.month, currentTopTemp.day);
@@ -290,7 +290,7 @@ class _CalendarEventIndicator extends CustomPainter {
 /// day headers.
 ///
 class _CalendarMonthDisplay extends StatelessWidget {
-  final SharedCalendarState sharedState;
+  final CalendarWidgetState sharedState;
   final Location location;
   final DateTime displayDate;
   final HeaderDayIndicator dayIndicator;
@@ -371,7 +371,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
                     : Colors.white,
             shape: new CircleBorder(),
             child: new Text(day.day.toString()),
-            onPressed: () => sharedState.source.scrollToDay(day),
+            onPressed: () => sharedState.scrollToDay(day),
             padding: EdgeInsets.zero,
           ),
         );
