@@ -1,8 +1,7 @@
 # example
 
-A new Flutter project.
+An example of a project with the sliver calendar.
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Do cool stuff.

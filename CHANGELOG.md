@@ -11,3 +11,8 @@
 
 * Fix subscription cancel/fix up for the pub spec.
 * Fix the homepage for the calendar code.
+
+## [0.1.0] - Sep 26th 2018
+
+* Change the subscription model to make it more in line with
+how flutter normally works.

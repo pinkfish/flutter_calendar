@@ -18,18 +18,19 @@ Here is how to use the calendar widget itself:
 ```
 new CalendarWidget(
               initialDate: new TZDateTime.now(local),
-              source: _calendarState,
+              buildItem: buildItem,
+              getEvents: getEvents,
             );
 ```
 
 How to setup a source for the calendar widget.
 ```
-class GameListCalendarState extends CalendarSource {
+...
   List<Game> _listToShow;
   StreamSubscription<UpdateReason> _listening;
 
   @override
-  Widget buildWidget(BuildContext context, CalendarEvent event) {
+  Widget buildItem(BuildContext context, CalendarEvent event) {
     return new GameCard(_listToShow[event.index]);
   }
 
@@ -47,34 +48,7 @@ class GameListCalendarState extends CalendarSource {
         instant: g.tzTime, instantEnd: g.tzEndTime, index: pos++)));
     return events;
   }
-
-  @override
-  void initState() {
-    _listToShow = UserDatabaseData.instance.games.values.toList();
-    _listening = UserDatabaseData.instance.gameStream.listen((UpdateReason r) {
-      _listToShow = UserDatabaseData.instance.games.values.toList();
-      state.updateEvents();
-    });
-  }
-
-  @override
-  void dispose() {
-    _listening.cancel();
-  }
-
-  Future<void> loadGames(FilterDetails details) async {
-    Iterable<Game> list = await UserDatabaseData.instance.getGames(details);
-
-    _setGames(list);
-  }
-
-  void _setGames(Iterable<Game> res) {
-    List<Game> games = res.toList();
-    games.sort((a, b) => a.time.compareTo(b.time));
-
-    _listToShow = games;
-  }
-}
+...
 ```
 
 Example of the calendar widget in action:
