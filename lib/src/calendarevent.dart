@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
-import 'sliverscrollviewcalendar.dart';
 
 /// One day duration to use in the rest of the system.
 const Duration oneDay = const Duration(days: 1);
@@ -66,7 +64,7 @@ abstract class CalendarSource {
 abstract class CalendarEventElement {
   void updateEvents();
 
-  void scrollToDate(TZDateTime time);
+  void scrollToDate(DateTime time);
 }
 
 /// The type of the calendar view to show.  Right now only schedule is
@@ -81,18 +79,18 @@ class CalendarEvent {
   CalendarEvent({
     @required this.index,
     @required this.instant,
-    @required TZDateTime instantEnd,
+    @required DateTime instantEnd,
   }) : _instantEnd = instantEnd;
-  TZDateTime instant;
-  TZDateTime _instantEnd;
+  DateTime instant;
+  DateTime _instantEnd;
   int index;
 
-  TZDateTime get instantEnd => _instantEnd;
+  DateTime get instantEnd => _instantEnd;
 
   static const int YEAR_OFFSET = 12 * 31;
   static const int MONTH_OFFSET = 31;
 
-  static int indexFromMilliseconds(DateTime time, Location loc) {
+  static int indexFromMilliseconds(DateTime time) {
     return time.year * YEAR_OFFSET +
         (time.month - 1) * MONTH_OFFSET +
         time.day -

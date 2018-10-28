@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:timezone/timezone.dart';
+
 import 'dart:async';
 import 'calendarevent.dart';
 import 'calendar.dart';
 
 const Duration _kExpand = const Duration(milliseconds: 200);
-
 
 ///
 /// This function will be called to generate a day in the header.  By
@@ -42,7 +41,6 @@ typedef EventIndicator = Widget Function(
 /// month/year and a drop down item as well as opening to show the whole month.
 ///
 class CalendarHeader extends StatefulWidget {
-  final Location _location;
   final CalendarWidgetState state;
   final ImageProvider bannerHeader;
   final Color color;
@@ -60,12 +58,11 @@ class CalendarHeader extends StatefulWidget {
   CalendarHeader(
     this.state,
     this.bannerHeader,
-    Location location,
     this.color,
     this.headerStyle,
     this.dayIndicator,
     this.eventIndicator,
-  ) : _location = location ?? local;
+  );
 
   @override
   State createState() {
@@ -160,7 +157,8 @@ class CalendarHeaderState extends State<CalendarHeader>
       myExpandedState = !widget.state.headerExpanded;
       widget.state.headerExpanded = myExpandedState;
       _doAnimation();
-      PageStorage.of(context)?.writeState(context, widget.state..headerExpanded);
+      PageStorage.of(context)
+          ?.writeState(context, widget.state..headerExpanded);
     });
   }
 
@@ -189,7 +187,6 @@ class CalendarHeaderState extends State<CalendarHeader>
                   },
                   child: new _CalendarMonthDisplay(
                     widget.state,
-                    widget._location,
                     monthToShow(_monthIndex),
                     widget.dayIndicator,
                     widget.eventIndicator,
@@ -291,15 +288,14 @@ class _CalendarEventIndicator extends CustomPainter {
 ///
 class _CalendarMonthDisplay extends StatelessWidget {
   final CalendarWidgetState sharedState;
-  final Location location;
   final DateTime displayDate;
   final HeaderDayIndicator dayIndicator;
   final EventIndicator eventIndicator;
 
   static const Duration week = const Duration(days: 7);
 
-  _CalendarMonthDisplay(this.sharedState, this.location, this.displayDate,
-      this.dayIndicator, this.eventIndicator);
+  _CalendarMonthDisplay(this.sharedState, this.displayDate, this.dayIndicator,
+      this.eventIndicator);
 
   Widget _eventIndicator(Widget button, int eventIndex) {
     if (sharedState.events.containsKey(eventIndex)) {
@@ -377,7 +373,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
         );
       }
     }
-    int eventIndex = CalendarEvent.indexFromMilliseconds(day, location);
+    int eventIndex = CalendarEvent.indexFromMilliseconds(day);
     return _eventIndicator(button, eventIndex);
   }
 

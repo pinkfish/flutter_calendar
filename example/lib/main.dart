@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sliver_calendar/sliver_calendar.dart';
-import 'package:timezone/timezone.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+
 import 'dart:math';
-import 'dart:typed_data';
-import 'dart:async';
 
-void main() async {
-  ByteData loadedData;
-
-  await Future.wait([
-    rootBundle.load('assets/timezone/2018c.tzf').then((ByteData data) {
-      loadedData = data;
-      print('loaded data');
-    })
-  ]);
-  initializeDatabase(loadedData.buffer.asUint8List());
+void main() {
   runApp(new MyApp());
 }
 
@@ -44,74 +31,49 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<CalendarEvent> events = <CalendarEvent>[];
-  Location loc;
+
   Random random = new Random();
 
+  @override
   void initState() {
     super.initState();
   }
 
   Widget buildItem(BuildContext context, CalendarEvent e) {
-    return new Card(
-      child: new ListTile(
-        title: new Text("Event ${e.index}"),
-        subtitle: new Text("Yay for events"),
+    return Card(
+      child: ListTile(
+        title: Text("Event ${e.index}"),
+        subtitle: Text("Yay for events"),
         leading: const Icon(Icons.gamepad),
       ),
     );
   }
 
   List<CalendarEvent> getEvents(DateTime start, DateTime end) {
-    if (loc != null && events.length == 0) {
-      TZDateTime nowTime =
-      new TZDateTime.now(loc).subtract(new Duration(days: 5));
-      for (int i = 0; i < 20; i++) {
-        TZDateTime start =
-        nowTime.add(new Duration(days: i + random.nextInt(10)));
-        events.add(new CalendarEvent(
-            index: i,
-            instant: start,
-            instantEnd: start.add(new Duration(minutes: 30))));
-      }
+    DateTime nowTime = DateTime.now().subtract(Duration(days: 5));
+    for (int i = 0; i < 20; i++) {
+      DateTime start = nowTime.add(Duration(days: i + random.nextInt(10)));
+      events.add(CalendarEvent(
+          index: i,
+          instant: start,
+          instantEnd: start.add(Duration(minutes: 30))));
     }
+
     return events;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
-      body: new Column(
-        children: <Widget>[
-          new FutureBuilder<String>(
-            future: FlutterNativeTimezone.getLocalTimezone(),
-            builder: (BuildContext context, AsyncSnapshot<String> tz) {
-              if (tz.hasData) {
-                 loc = getLocation(tz.data);
-
-                return new Expanded(
-                  child: new CalendarWidget(
-                    initialDate: new TZDateTime.now(loc),
-                    location: loc,
-                    buildItem: buildItem,
-                    getEvents: getEvents,
-                    bannerHeader:
-                        new AssetImage("assets/images/calendarheader.jpg"),
-                    monthHeader:
-                        new AssetImage("assets/images/calendarbanner.jpg"),
-                  ),
-                );
-              } else {
-                return new Center(
-                  child: new Text("Getting the timezone"),
-                );
-              }
-            },
-          ),
-        ],
+      body: CalendarWidget(
+        initialDate: DateTime.now(),
+        buildItem: buildItem,
+        getEvents: getEvents,
+        bannerHeader: AssetImage("assets/images/calendarheader.png"),
+        monthHeader: AssetImage("assets/images/calendarbanner.jpg"),
       ),
     );
   }

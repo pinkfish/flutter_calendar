@@ -5,26 +5,16 @@ author: David Bennett <pinkfishfrog@gmail.com>
 homepage: https://github.com/pinkfish/flutter_calendar
 
 environment:
-    sdk: ">=1.19.0 <3.0.0"
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl:  ^0.15.5
-  flutter_native_timezone: ^1.0.0
 
-
-  timezone:
-     # Need to use git here since there is a bug in the main repository.
-     git:
-       url: "https://github.com/pinkfish/timezone.git"
+  intl: 0.15.7
 
 dev_dependencies:
   test: any
   flutter_test:
     sdk: flutter
-
-# The following section is specific to Flutter.
-flutter:
-

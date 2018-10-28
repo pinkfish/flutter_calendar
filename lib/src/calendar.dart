@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:timezone/timezone.dart';
 import 'calendarheader.dart';
 import 'calendarevent.dart';
 export 'calendarevent.dart';
@@ -22,9 +21,9 @@ typedef Widget CalendarWidgetBuilder(BuildContext context, CalendarEvent index);
 /// current month, drop down and then the events in a sliverlist.
 ///
 class CalendarWidget extends StatefulWidget {
-  final TZDateTime initialDate;
+  final DateTime initialDate;
   final CalendarViewType view;
-  final Location location;
+
   final double initialScrollOffset;
   final CalendarEventBuiler getEvents;
   final CalendarWidgetBuilder buildItem;
@@ -60,14 +59,12 @@ class CalendarWidget extends StatefulWidget {
     @required this.getEvents,
     Key key,
     this.view = CalendarViewType.Schedule,
-    Location location,
     String calendarKey,
     double initialScrollOffset,
     this.headerColor,
     this.headerMonthStyle,
     this.header,
-  })  : location = location ?? local,
-        initialScrollOffset = initialScrollOffset ??
+  })  : initialScrollOffset = initialScrollOffset ??
             new DateTime.now().microsecondsSinceEpoch.toDouble(),
         super(key: key);
 
@@ -80,7 +77,6 @@ class CalendarWidget extends StatefulWidget {
 class CalendarWidgetState extends State<CalendarWidget> {
   int _currentTopDisplayIndex;
   Map<int, List<CalendarEvent>> events = <int, List<CalendarEvent>>{};
-  Location location;
   StreamController<int> _updateController = new StreamController<int>();
   StreamController<bool> _headerExpandController = new StreamController<bool>();
   Stream<bool> _headerBroadcastStream;
@@ -90,6 +86,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
   bool _headerExpanded = false;
   SliverScrollViewCalendarElement element;
 
+  @override
   void initState() {
     super.initState();
     currentTopDisplayIndex = widget.initialDate.millisecondsSinceEpoch ~/
@@ -139,32 +136,32 @@ class CalendarWidgetState extends State<CalendarWidget> {
     return _headerBroadcastStream;
   }
 
+  @override
   void dispose() {
     _updateController?.close();
     _updateController = null;
     _headerExpandController?.close();
     _headerExpandController = null;
     _headerBroadcastStream = null;
+    super.dispose();
   }
 
   ///
   /// Updates the events in the given time range by pulling from the
   /// source and updating the indexes in the events mapping.
   ///
-  void updateInternalEvents(TZDateTime startWindow, TZDateTime endWindow) {
+  void updateInternalEvents(DateTime startWindow, DateTime endWindow) {
     List<CalendarEvent> rawEvents = widget.getEvents(startWindow, endWindow);
     rawEvents.sort(
         (CalendarEvent e, CalendarEvent e2) => e.instant.compareTo(e2.instant));
     // Make sure we clean up the old indexes when we update.
     events.clear();
     if (rawEvents.length > 0) {
-      int curIndex =
-          CalendarEvent.indexFromMilliseconds(rawEvents[0].instant, location);
+      int curIndex = CalendarEvent.indexFromMilliseconds(rawEvents[0].instant);
       int sliceIndex = 0;
       // Get the offsets into the array.
       for (int i = 1; i < rawEvents.length; i++) {
-        int index =
-            CalendarEvent.indexFromMilliseconds(rawEvents[i].instant, location);
+        int index = CalendarEvent.indexFromMilliseconds(rawEvents[i].instant);
         if (index != curIndex) {
           if (sliceIndex != i) {
             events[curIndex] = rawEvents.sublist(sliceIndex, i);
@@ -210,15 +207,14 @@ class CalendarWidgetState extends State<CalendarWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         widget.header ??
-            new CalendarHeader(this, widget.bannerHeader, widget.location,
-                widget.headerColor, widget.headerMonthStyle, null, null),
+            new CalendarHeader(this, widget.bannerHeader, widget.headerColor,
+                widget.headerMonthStyle, null, null),
         new Expanded(
           child: new WrappedScrollViewCalendar(
             state: this,
             initialDate: widget.initialDate,
             initialScrollOffset: widget.initialScrollOffset,
             view: widget.view,
-            location: widget.location,
             monthHeader: widget.monthHeader,
           ),
         ),
