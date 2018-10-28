@@ -1,7 +1,5 @@
 import 'package:test/test.dart';
 
-import 'package:sliver_calendar/sliver_calendar.dart';
+import 'package:date_interval_navigator/date_interval_navigator.dart';
 
-void main() {
-
-}
+void main() {}

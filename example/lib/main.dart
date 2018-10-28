@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sliver_calendar/sliver_calendar.dart';
+import 'package:date_interval_navigator/date_interval_navigator.dart';
 
 import 'dart:math';
 

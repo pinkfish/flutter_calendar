@@ -1,7 +1,7 @@
-name: sliver_calendar
+name: date_interval_navigator
 description: Display a calendar view for flutter.
 version: 0.1.0
-author: David Bennett <pinkfishfrog@gmail.com>
+author: Vinicisu ANdrade
 homepage: https://github.com/pinkfish/flutter_calendar
 
 environment:
