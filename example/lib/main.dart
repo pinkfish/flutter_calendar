@@ -10,7 +10,7 @@ import 'dart:async';
 void main() async {
   ByteData loadedData;
 
-  await Future.wait([
+  await Future.wait<void>(<Future<void>>[
     rootBundle.load('assets/timezone/2018c.tzf').then((ByteData data) {
       loadedData = data;
       print('loaded data');
@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Location loc;
   Random random = new Random();
 
+  @override
   void initState() {
     super.initState();
   }

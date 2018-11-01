@@ -90,6 +90,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
   bool _headerExpanded = false;
   SliverScrollViewCalendarElement element;
 
+  @override
   void initState() {
     super.initState();
     currentTopDisplayIndex = widget.initialDate.millisecondsSinceEpoch ~/
@@ -139,7 +140,9 @@ class CalendarWidgetState extends State<CalendarWidget> {
     return _headerBroadcastStream;
   }
 
+  @override
   void dispose() {
+    super.dispose();
     _updateController?.close();
     _updateController = null;
     _headerExpandController?.close();

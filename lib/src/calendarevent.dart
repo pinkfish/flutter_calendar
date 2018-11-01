@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
-import 'sliverscrollviewcalendar.dart';
 
 /// One day duration to use in the rest of the system.
 const Duration oneDay = const Duration(days: 1);
