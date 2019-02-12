@@ -2,8 +2,8 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
-  language:
-    enableSuperMixins: true
+  #language:
+  #  enableSuperMixins: true
   errors:
     todo: ignore
   exclude:
