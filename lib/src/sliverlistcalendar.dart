@@ -60,7 +60,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     bool reachedEnd = false;
     bool forceScrollUpdate = false;
 
-    print('new top $newTopScrollIndex');
+    debugPrint('new top $newTopScrollIndex');
 
     // This algorithm in principle is straight-forward: find the first child
     // that overlaps the given scrollOffset, creating more children at the top
@@ -110,7 +110,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
             scrollOffsetCorrection: childParentData.layoutOffset - scrollOffset,
           );
         }
-        print('$geometry $scrollOffset ${childParentData.layoutOffset}');
+        debugPrint('$geometry $scrollOffset ${childParentData.layoutOffset}');
         //sharedState.controller.jumpTo(childParentData.layoutOffset);
         return;
       }
@@ -255,7 +255,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           );
           if (child == null) {
             // We have run out of children.
-            print('No children $geometry');
+            debugPrint('No children $geometry');
             return false;
           }
         } else {

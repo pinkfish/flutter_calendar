@@ -22,18 +22,6 @@ typedef Widget CalendarWidgetBuilder(BuildContext context, CalendarEvent index);
 /// current month, drop down and then the events in a sliverlist.
 ///
 class CalendarWidget extends StatefulWidget {
-  final TZDateTime initialDate;
-  final CalendarViewType view;
-  final Location location;
-  final double initialScrollOffset;
-  final CalendarEventBuiler getEvents;
-  final CalendarWidgetBuilder buildItem;
-  final ImageProvider monthHeader;
-  final ImageProvider bannerHeader;
-  final Color headerColor;
-  final TextStyle headerMonthStyle;
-  final Widget header;
-
   ///
   /// Creates a calendar widget in place.  The [initialDate] is the date
   /// which will be used to show the first calendar in the list.  The
@@ -54,22 +42,47 @@ class CalendarWidget extends StatefulWidget {
   ///
   CalendarWidget({
     @required this.initialDate,
-    @required this.bannerHeader,
-    @required this.monthHeader,
     @required this.buildItem,
     @required this.getEvents,
+    this.beginningRangeDate,
+    this.endingRangeDate,
+    this.bannerHeader,
+    this.monthHeader,
     Key key,
     this.view = CalendarViewType.Schedule,
+    this.weekBeginsWithDay = 0,
     Location location,
     String calendarKey,
     double initialScrollOffset,
     this.headerColor,
     this.headerMonthStyle,
+    this.headerExpandIconColor,
+    this.tapToCloseHeader = true,
     this.header,
-  })  : location = location ?? local,
+  })  : assert((beginningRangeDate == null || beginningRangeDate.compareTo(initialDate) <= 0) 
+          && (endingRangeDate == null || initialDate.compareTo(endingRangeDate) <= 0)),
+        location = location ?? local,
         initialScrollOffset = initialScrollOffset ??
-            new DateTime.now().microsecondsSinceEpoch.toDouble(),
+            //new DateTime.now().microsecondsSinceEpoch.toDouble(),
+            initialDate.microsecondsSinceEpoch.toDouble(),
         super(key: key);
+        
+  final TZDateTime initialDate;
+  final TZDateTime beginningRangeDate;
+  final TZDateTime endingRangeDate;
+  final CalendarViewType view;
+  final int weekBeginsWithDay; // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
+  final Location location;
+  final double initialScrollOffset;
+  final CalendarEventBuiler getEvents;
+  final CalendarWidgetBuilder buildItem;
+  final ImageProvider monthHeader;
+  final ImageProvider bannerHeader;
+  final Color headerColor;
+  final TextStyle headerMonthStyle;
+  final Color headerExpandIconColor;
+  final bool tapToCloseHeader;
+  final Widget header;
 
   @override
   State createState() {
@@ -97,7 +110,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
         Duration.millisecondsPerDay;
   }
 
-  /// Sets the current top index and tells people anbout the change.
+  /// Sets the current top index and tells people about the change.
   set currentTopDisplayIndex(int index) {
     _currentTopDisplayIndex = index;
 
@@ -214,15 +227,22 @@ class CalendarWidgetState extends State<CalendarWidget> {
       children: <Widget>[
         widget.header ??
             new CalendarHeader(this, widget.bannerHeader, widget.location,
-                widget.headerColor, widget.headerMonthStyle, null, null),
+                widget.headerColor, widget.headerMonthStyle, widget.headerExpandIconColor, widget.weekBeginsWithDay, 
+                null, null, widget.beginningRangeDate, widget.endingRangeDate),
         new Expanded(
-          child: new WrappedScrollViewCalendar(
-            state: this,
-            initialDate: widget.initialDate,
-            initialScrollOffset: widget.initialScrollOffset,
-            view: widget.view,
-            location: widget.location,
-            monthHeader: widget.monthHeader,
+          child: new Padding(
+            padding: new EdgeInsets.only(top: 5.0),
+            child: new WrappedScrollViewCalendar(
+              state: this,
+              initialDate: widget.initialDate,
+              beginningRangeDate: widget.beginningRangeDate,
+              endingRangeDate: widget.endingRangeDate,
+              initialScrollOffset: widget.initialScrollOffset,
+              view: widget.view,
+              location: widget.location,
+              monthHeader: widget.monthHeader,
+              tapToCloseHeader: widget.tapToCloseHeader,
+            ),
           ),
         ),
       ],
