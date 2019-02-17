@@ -7,10 +7,10 @@ dependencies:
   flutter_native_timezone: ^1.0.0
   sliver_calendar:
     path: ../
-  timezone:
+  timezone:  ^0.5.2
      # Need to use git here since there is a bug in the main repository.
-     git:
-       url: "https://github.com/pinkfish/timezone.git"
+     #git:
+     #  url: "https://github.com/pinkfish/timezone.git"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

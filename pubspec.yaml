@@ -15,10 +15,10 @@ dependencies:
   flutter_native_timezone: ^1.0.0
 
 
-  timezone:
+  timezone: ^0.5.2
      # Need to use git here since there is a bug in the main repository.
-     git:
-       url: "https://github.com/pinkfish/timezone.git"
+     #git:
+     #  url: "https://github.com/pinkfish/timezone.git"
 
 dev_dependencies:
   test: any

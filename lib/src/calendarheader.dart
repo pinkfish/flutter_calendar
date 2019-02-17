@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timezone/timezone.dart';
-import 'dart:async';
-import 'calendarevent.dart';
+
 import 'calendar.dart';
+import 'calendarevent.dart';
 
 const Duration _kExpand = const Duration(milliseconds: 200);
-
 
 ///
 /// This function will be called to generate a day in the header.  By
@@ -133,7 +134,7 @@ class CalendarHeaderState extends State<CalendarHeader>
     if (myExpandedState) {
       _controller.forward();
     } else {
-      _controller.reverse().then<void>((Null value) {
+      _controller.reverse().then<void>((void value) {
         setState(() {
           // Rebuild without widget.children.
         });
@@ -160,7 +161,8 @@ class CalendarHeaderState extends State<CalendarHeader>
       myExpandedState = !widget.state.headerExpanded;
       widget.state.headerExpanded = myExpandedState;
       _doAnimation();
-      PageStorage.of(context)?.writeState(context, widget.state..headerExpanded);
+      PageStorage.of(context)
+          ?.writeState(context, widget.state..headerExpanded);
     });
   }
 
