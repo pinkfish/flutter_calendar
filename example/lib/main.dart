@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sliver_calendar/sliver_calendar.dart';
 import 'package:timezone/timezone.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -8,6 +9,9 @@ import 'dart:typed_data';
 import 'dart:async';
 
 void main() async {
+  // Comment this line to enable debug printing...
+  debugPrint = (String message, {int wrapWidth}) {};
+
   ByteData loadedData;
 
   await Future.wait<void>(<Future<void>>[
@@ -29,6 +33,14 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const <LocalizationsDelegate<MaterialLocalizations>>[
+        GlobalMaterialLocalizations.delegate
+      ],
+      supportedLocales: const <Locale>[
+        const Locale('en', ''), 
+        const Locale('fr', ''), 
+      ],
       home: new MyHomePage(title: 'Flutter Calendar demo'),
     );
   }
@@ -46,11 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<CalendarEvent> events = <CalendarEvent>[];
   Location loc;
   Random random = new Random();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Widget buildItem(BuildContext context, CalendarEvent e) {
     return new Card(
@@ -91,23 +98,26 @@ class _MyHomePageState extends State<MyHomePage> {
             future: FlutterNativeTimezone.getLocalTimezone(),
             builder: (BuildContext context, AsyncSnapshot<String> tz) {
               if (tz.hasData) {
-                 loc = getLocation(tz.data);
-
+                loc = getLocation(tz.data);
+                TZDateTime nowTime = new TZDateTime.now(loc);
                 return new Expanded(
                   child: new CalendarWidget(
-                    initialDate: new TZDateTime.now(loc),
+                    initialDate: nowTime,
+                    beginningRangeDate: nowTime.subtract(new Duration(days: 31)),
+                    endingRangeDate: nowTime.add(new Duration(days: 31)),
                     location: loc,
                     buildItem: buildItem,
                     getEvents: getEvents,
                     bannerHeader:
-                        new AssetImage("assets/images/calendarheader.jpg"),
+                        new AssetImage("assets/images/calendarheader.png"),
                     monthHeader:
                         new AssetImage("assets/images/calendarbanner.jpg"),
+                    weekBeginsWithDay: 1, // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
                   ),
                 );
               } else {
                 return new Center(
-                  child: new Text("Getting the timezone"),
+                  child: new Text("Getting the timezone..."),
                 );
               }
             },

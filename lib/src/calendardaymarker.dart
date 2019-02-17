@@ -74,11 +74,11 @@ class CalendarDayMarker extends StatelessWidget {
 }
 
 class _CalendarDayMarkerPainter extends CustomPainter {
+  _CalendarDayMarkerPainter(this._radius, this._offset, this._color);
+  
   final double _radius;
   final Offset _offset;
   final Color _color;
-
-  _CalendarDayMarkerPainter(this._radius, this._offset, this._color);
 
   @override
   void paint(Canvas canvas, Size size) {

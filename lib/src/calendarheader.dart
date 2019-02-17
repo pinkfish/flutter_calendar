@@ -43,14 +43,6 @@ typedef EventIndicator = Widget Function(
 /// month/year and a drop down item as well as opening to show the whole month.
 ///
 class CalendarHeader extends StatefulWidget {
-  final Location _location;
-  final CalendarWidgetState state;
-  final ImageProvider bannerHeader;
-  final Color color;
-  final TextStyle headerStyle;
-  final EventIndicator eventIndicator;
-  final HeaderDayIndicator dayIndicator;
-
   ///
   /// Creates the calendar header.  [calendarKey] is the key to find the shared
   /// state from.  [location] to use for the calendar.
@@ -64,9 +56,25 @@ class CalendarHeader extends StatefulWidget {
     Location location,
     this.color,
     this.headerStyle,
+    this.expandIconColor,
+    this.weekBeginsWithDay,
     this.dayIndicator,
-    this.eventIndicator,
+    this.eventIndicator, 
+    this.beginningRangeDate,
+    this.endingRangeDate
   ) : _location = location ?? local;
+
+  final Location _location;
+  final CalendarWidgetState state;
+  final ImageProvider bannerHeader;
+  final Color color;
+  final TextStyle headerStyle;
+  final Color expandIconColor;
+  final int weekBeginsWithDay;
+  final EventIndicator eventIndicator;
+  final HeaderDayIndicator dayIndicator;
+  final TZDateTime beginningRangeDate;
+  final TZDateTime endingRangeDate;
 
   @override
   State createState() {
@@ -77,8 +85,7 @@ class CalendarHeader extends StatefulWidget {
 ///
 /// The calendar state associated with the header.
 ///
-class CalendarHeaderState extends State<CalendarHeader>
-    with SingleTickerProviderStateMixin {
+class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProviderStateMixin {
   double get maxExtent => 55.0;
 
   StreamSubscription<int> _subscription;
@@ -90,6 +97,8 @@ class CalendarHeaderState extends State<CalendarHeader>
   Animation<double> _iconTurns;
   bool myExpandedState = false;
   int _monthIndex;
+  int _beginningMonthIndex;
+  int _endingMonthIndex;
 
   int monthIndexFromTime(DateTime time) {
     return (time.year - 1970) * 12 + (time.month - 1);
@@ -103,6 +112,8 @@ class CalendarHeaderState extends State<CalendarHeader>
   void initState() {
     super.initState();
     _monthIndex = monthIndexFromTime(new DateTime.now());
+    _beginningMonthIndex = widget.beginningRangeDate != null ? monthIndexFromTime(widget.beginningRangeDate) : -1;
+    _endingMonthIndex = widget.endingRangeDate != null ? monthIndexFromTime(widget.endingRangeDate) : -1;
     _controller = new AnimationController(duration: _kExpand, vsync: this);
     //sharedState = SharedCalendarState.get(widget.calendarKey);
     _easeInAnimation =
@@ -167,6 +178,13 @@ class CalendarHeaderState extends State<CalendarHeader>
   }
 
   Widget _buildChildren(BuildContext context, Widget child) {
+    DismissDirection direction = DismissDirection.horizontal;
+    if (_beginningMonthIndex == _monthIndex) {
+      direction = DismissDirection.endToStart;
+    } else if (_endingMonthIndex == _monthIndex) {
+      direction = DismissDirection.startToEnd;
+    }
+
     return new Container(
       child: new Column(
         mainAxisSize: MainAxisSize.min,
@@ -181,6 +199,8 @@ class CalendarHeaderState extends State<CalendarHeader>
                 child: new Dismissible(
                   key: new ValueKey<int>(_monthIndex),
                   resizeDuration: null,
+                  dismissThresholds: const <DismissDirection, double>{DismissDirection.horizontal: 0.2},
+                  direction: direction,
                   onDismissed: (DismissDirection direction) {
                     setState(() {
                       _monthIndex +=
@@ -193,6 +213,7 @@ class CalendarHeaderState extends State<CalendarHeader>
                     widget.state,
                     widget._location,
                     monthToShow(_monthIndex),
+                    widget.weekBeginsWithDay,
                     widget.dayIndicator,
                     widget.eventIndicator,
                   ),
@@ -226,14 +247,14 @@ class CalendarHeaderState extends State<CalendarHeader>
         currentTopTemp.year, currentTopTemp.month, currentTopTemp.day);
 
     return new Container(
-      padding: new EdgeInsets.only(top: 8.0, left: 5.0, bottom: 8.0),
+      padding: new EdgeInsets.only(top: 10.0, left: 5.0, bottom: 10.0),
       decoration: new BoxDecoration(
         color: widget.color ?? Colors.white,
-        image: new DecorationImage(
+        image: widget.bannerHeader != null ? new DecorationImage(
           image: widget.bannerHeader,
           fit: BoxFit.fitHeight,
           alignment: new Alignment(1.0, 1.0),
-        ),
+        ) : null,
       ),
       child: new GestureDetector(
         onTap: _handleOpen,
@@ -241,18 +262,19 @@ class CalendarHeaderState extends State<CalendarHeader>
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             new Text(
-              myExpandedState
+              (myExpandedState
                   ? MaterialLocalizations.of(context)
                       .formatMonthYear(monthToShow(_monthIndex))
                   : MaterialLocalizations.of(context)
-                      .formatMonthYear(currentTop),
+                      .formatMonthYear(currentTop)) + ' ',
               style: widget.headerStyle ??
                   Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
             ),
             new RotationTransition(
               turns: _iconTurns,
-              child: const Icon(
+              child: new Icon(
                 Icons.expand_more,
+                color: widget.expandIconColor ?? Colors.black,
                 size: 25.0,
               ),
             ),
@@ -268,10 +290,10 @@ class CalendarHeaderState extends State<CalendarHeader>
 /// event at it.
 ///
 class _CalendarEventIndicator extends CustomPainter {
+  _CalendarEventIndicator(this._radius, this._event);
+
   final double _radius;
   final CalendarEvent _event;
-
-  _CalendarEventIndicator(this._radius, this._event);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -292,16 +314,17 @@ class _CalendarEventIndicator extends CustomPainter {
 /// day headers.
 ///
 class _CalendarMonthDisplay extends StatelessWidget {
+  _CalendarMonthDisplay(this.sharedState, this.location, this.displayDate,
+      this.weekBeginsWithDay, this.dayIndicator, this.eventIndicator);
+
   final CalendarWidgetState sharedState;
   final Location location;
   final DateTime displayDate;
+  final int weekBeginsWithDay;
   final HeaderDayIndicator dayIndicator;
   final EventIndicator eventIndicator;
 
   static const Duration week = const Duration(days: 7);
-
-  _CalendarMonthDisplay(this.sharedState, this.location, this.displayDate,
-      this.dayIndicator, this.eventIndicator);
 
   Widget _eventIndicator(Widget button, int eventIndex) {
     if (sharedState.events.containsKey(eventIndex)) {
@@ -388,7 +411,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
     DateTime nowTmp = new DateTime.now();
     DateTime nowTime = new DateTime(nowTmp.year, nowTmp.month, nowTmp.day);
     DateTime topFirst = displayDate;
-    topFirst = topFirst.subtract(new Duration(days: topFirst.weekday));
+    topFirst = topFirst.subtract(new Duration(days: topFirst.weekday - weekBeginsWithDay));
     DateTime topSecond = topFirst.add(week);
     if (topSecond.day == 1) {
       // Opps, out by a week.
