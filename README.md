@@ -2,7 +2,8 @@
 
 Shows a scrolling calendar list of events.  This is still relatively basic, it always
 assumes that the getEvents returns the entire list of calendar events (mostly ignoring
-the values passed into the source).  It does work however :)  Optionally, you can use an image as a background for the calendar header and another image for the month header.
+the values passed into the source).  It does work however :)  Optionally, you can use an
+image as a background for the calendar header and another image for the month header.
 
 
 The calendar uses slivers to display the widgets in the view and lets you scroll forward
