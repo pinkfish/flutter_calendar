@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
 import 'calendar.dart';
 
 /// A sliver that places multiple box children in a linear array along the main
@@ -102,7 +102,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     RenderBox earliestUsefulChild = firstChild;
     if (newTopScrollIndex != null) {
       final SliverMultiBoxAdaptorParentData childParentData =
-          firstChild.parentData;
+          firstChild.parentData as SliverMultiBoxAdaptorParentData;
       if (childParentData.index == newTopScrollIndex) {
         newTopScrollIndex = null;
         if (childParentData.layoutOffset != scrollOffset) {
@@ -125,7 +125,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
       if (earliestUsefulChild == null) {
         final SliverMultiBoxAdaptorParentData childParentData =
-            firstChild.parentData;
+            firstChild.parentData as SliverMultiBoxAdaptorParentData;
         childParentData.layoutOffset = 0.0;
         //print("earlierusefulchild ${childParentData.layoutOffset}");
 
@@ -168,7 +168,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           scrollOffsetCorrection: correction - earliestScrollOffset,
         );
         final SliverMultiBoxAdaptorParentData childParentData =
-            firstChild.parentData;
+            firstChild.parentData as SliverMultiBoxAdaptorParentData;
         childParentData.layoutOffset = 0.0;
         //print("correcting here ${childParentData.layoutOffset} == 0.0");
 
@@ -176,7 +176,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
       }
 
       final SliverMultiBoxAdaptorParentData childParentData =
-          earliestUsefulChild.parentData;
+          earliestUsefulChild.parentData as SliverMultiBoxAdaptorParentData;
       childParentData.layoutOffset = firstChildScrollOffset;
       //print("layout offset update ${childParentData.layoutOffset} == 0.0");
 
@@ -213,7 +213,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
     if (earliestUsefulChild != null) {
       final SliverMultiBoxAdaptorParentData parentData =
-          earliestUsefulChild.parentData;
+          earliestUsefulChild.parentData as SliverMultiBoxAdaptorParentData;
       state?.currentTopDisplayIndex = parentData.index ~/ 2;
     }
 
@@ -265,7 +265,8 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
         trailingChildWithLayout = child;
       }
       assert(child != null);
-      final SliverMultiBoxAdaptorParentData childParentData = child.parentData;
+      final SliverMultiBoxAdaptorParentData childParentData =
+          child.parentData as SliverMultiBoxAdaptorParentData;
       childParentData.layoutOffset = endScrollOffset;
       assert(childParentData.index == index);
       endScrollOffset = childScrollOffset(child) + paintExtentOf(child);
@@ -295,7 +296,8 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
       // Check here to see if we should drop out because we hit the endpoint.
       if (newTopScrollIndex != null) {
-        SliverMultiBoxAdaptorParentData childParentData = lastChild.parentData;
+        SliverMultiBoxAdaptorParentData childParentData =
+            lastChild.parentData as SliverMultiBoxAdaptorParentData;
         debugPrint(
             'top scroll offset! 2 $newTopScrollIndex ${childParentData.index}');
         if (childParentData.index == newTopScrollIndex) {
@@ -360,7 +362,8 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
       to: endScrollOffset,
     );
 
-    SliverMultiBoxAdaptorParentData childParentData = firstChild.parentData;
+    SliverMultiBoxAdaptorParentData childParentData =
+        firstChild.parentData as SliverMultiBoxAdaptorParentData;
     geometry = new SliverGeometry(
       scrollOffsetCorrection: forceScrollUpdate
           ? childParentData.layoutOffset - scrollOffset
@@ -401,11 +404,10 @@ class SliverListCenter extends SliverMultiBoxAdaptorWidget {
 
   @override
   RenderSliverCenterList createRenderObject(BuildContext context) {
-    final SliverMultiBoxAdaptorElement element = context;
+    final SliverMultiBoxAdaptorElement element =
+        context as SliverMultiBoxAdaptorElement;
     RenderSliverCenterList ret = new RenderSliverCenterList(
-        childManager: element,
-        startIndex: startIndex,
-        state: state);
+        childManager: element, startIndex: startIndex, state: state);
     state.renderSliverList = ret;
     return ret;
   }
