@@ -12,7 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.15.5
-  flutter_native_timezone: ^1.0.1
+  flutter_native_timezone: ^1.0.2
   timezone: ^0.5.2
 
 dev_dependencies:
