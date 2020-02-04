@@ -16,3 +16,7 @@
 
 * Change the subscription model to make it more in line with
 how flutter normally works.
+
+## [0.2.1] - Feb 3rd 2020
+
+* Upgrade the i18n bits.
