@@ -554,6 +554,9 @@ class SliverScrollViewCalendar extends ScrollView {
   }
 }
 
+///
+/// This wraps the calendar im a scroll view.
+///
 class WrappedScrollViewCalendar extends StatefulWidget {
   WrappedScrollViewCalendar({
     @required this.initialDate,
@@ -578,12 +581,12 @@ class WrappedScrollViewCalendar extends StatefulWidget {
   final CalendarWidgetState state;
 
   @override
-  WrapperScrollViewCalendarState createState() {
-    return new WrapperScrollViewCalendarState();
+  _WrapperScrollViewCalendarState createState() {
+    return _WrapperScrollViewCalendarState();
   }
 }
 
-class WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
+class _WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
   StreamSubscription<bool> _onHeaderExpandChange;
 
   @override
@@ -608,11 +611,11 @@ class WrapperScrollViewCalendarState extends State<WrappedScrollViewCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return new InkWell(
+    return InkWell(
       onTap: widget.tapToCloseHeader && widget.state.headerExpanded
           ? _handleTapOnHeaderExpanded
           : null,
-      child: new SliverScrollViewCalendar(
+      child: SliverScrollViewCalendar(
         initialDate: widget.initialDate,
         beginningRangeDate: widget.beginningRangeDate,
         endingRangeDate: widget.endingRangeDate,

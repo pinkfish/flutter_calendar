@@ -7,61 +7,6 @@ const Duration oneDay = const Duration(days: 1);
 ///
 /// The source for the calendar, this is where to get all the events from.
 ///
-/*
-abstract class CalendarSource {
-  SliverScrollViewCalendarElement element;
-
-  List<CalendarEvent> getEvents(DateTime start, DateTime end);
-
-  ///
-  /// The widget for the specific calendar event, this is what to render
-  /// when showing the calendar event.
-  ///
-  Widget buildWidget(BuildContext context, CalendarEvent index);
-
-  ///
-  /// Called on startup to connect the calendar event element to the source.
-  /// This is used to handle the [scroolToDay] call.
-  ///
-  void init(SliverScrollViewCalendarElement key) {
-    element = key;
-    initState();
-  }
-
-  ///
-  /// Scrolls the calendar to the specific datetime set here.  Note
-  /// we only use the month/day/year for this.  The milliseconds is
-  /// *not* correct and not in local time.
-  ///
-  void scrollToDay(DateTime time) {
-    element.scrollToDate(time);
-  }
-
-  ///
-  /// Called when the source is update by a widget redo.
-  ///
-  void didUpdateSource(CalendarSource source) {
-  }
-
-  ///
-  /// Updates the events queue to rebuild the display.
-  ///
-  void updateEvents() {
-    element.updateEvents();
-  }
-
-  ///
-  /// Called to initialize the state for the event.
-  ///
-  void initState();
-
-  ///
-  /// Called when the event is disposed.
-  ///
-  void dispose();
-}
-*/
-
 abstract class CalendarEventElement {
   void updateEvents();
 
@@ -82,18 +27,24 @@ class CalendarEvent {
     @required this.instant,
     @required TZDateTime instantEnd,
   }) : _instantEnd = instantEnd;
+
+  /// The instant to display the event at.
   TZDateTime instant;
   TZDateTime _instantEnd;
+
+  /// The index to use for the event.
   int index;
 
+  /// when the event ends.
   TZDateTime get instantEnd => _instantEnd;
 
-  static const int YEAR_OFFSET = 12 * 31;
-  static const int MONTH_OFFSET = 31;
+  static const int _yearOffset = 12 * 31;
+  static const int _monthOffset = 31;
 
+  /// get the index from the milliseconds that are passed in.
   static int indexFromMilliseconds(DateTime time, Location loc) {
-    return time.year * YEAR_OFFSET +
-        (time.month - 1) * MONTH_OFFSET +
+    return time.year * _yearOffset +
+        (time.month - 1) * _monthOffset +
         time.day -
         1;
   }

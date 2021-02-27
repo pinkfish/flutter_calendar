@@ -20,3 +20,7 @@ how flutter normally works.
 ## [0.2.1] - Feb 3rd 2020
 
 * Upgrade the i18n bits.
+
+## [0.2.2] - Jan 21rd 2021
+
+* Upgrade the i18n bits.

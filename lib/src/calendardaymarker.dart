@@ -1,5 +1,5 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 /// A one device pixel thick horizontal line, with a circle at the start
 /// designed to look like the time of day lines in calendar.
@@ -38,10 +38,11 @@ class CalendarDayMarker extends StatelessWidget {
   /// ```
   final Color color;
 
+  /// Create a side for the border.
   static BorderSide createBorderSide(BuildContext context,
       {Color color, double width: 0.0}) {
     assert(width != null);
-    return new BorderSide(
+    return BorderSide(
       color: color ?? Theme.of(context).dividerColor,
       width: width,
     );
@@ -49,18 +50,18 @@ class CalendarDayMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new CustomPaint(
-      painter: new _CalendarDayMarkerPainter(
-          radius, new Offset(indent + radius / 2, height / 2), color),
-      child: new SizedBox(
+    return CustomPaint(
+      painter: _CalendarDayMarkerPainter(
+          radius, Offset(indent + radius / 2, height / 2), color),
+      child: SizedBox(
         height: height,
-        child: new Center(
-          child: new Container(
+        child: Center(
+          child: Container(
             height: 0.0,
-            margin: new EdgeInsetsDirectional.only(start: indent),
-            decoration: new ShapeDecoration(
-              shape: new Border(
-                bottom: new BorderSide(
+            margin: EdgeInsetsDirectional.only(start: indent),
+            decoration: ShapeDecoration(
+              shape: Border(
+                bottom: BorderSide(
                   color: color ?? Theme.of(context).dividerColor,
                   width: 0.0,
                 ),
@@ -75,7 +76,7 @@ class CalendarDayMarker extends StatelessWidget {
 
 class _CalendarDayMarkerPainter extends CustomPainter {
   _CalendarDayMarkerPainter(this._radius, this._offset, this._color);
-  
+
   final double _radius;
   final Offset _offset;
   final Color _color;

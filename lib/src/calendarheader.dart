@@ -51,18 +51,18 @@ class CalendarHeader extends StatefulWidget {
   /// day and event indicators can be customized.
   ///
   CalendarHeader(
-    this.state,
-    this.bannerHeader,
-    Location location,
-    this.color,
-    this.headerStyle,
-    this.expandIconColor,
-    this.weekBeginsWithDay,
-    this.dayIndicator,
-    this.eventIndicator, 
-    this.beginningRangeDate,
-    this.endingRangeDate
-  ) : _location = location ?? local;
+      this.state,
+      this.bannerHeader,
+      Location location,
+      this.color,
+      this.headerStyle,
+      this.expandIconColor,
+      this.weekBeginsWithDay,
+      this.dayIndicator,
+      this.eventIndicator,
+      this.beginningRangeDate,
+      this.endingRangeDate)
+      : _location = location ?? local;
 
   final Location _location;
   final CalendarWidgetState state;
@@ -78,14 +78,15 @@ class CalendarHeader extends StatefulWidget {
 
   @override
   State createState() {
-    return new CalendarHeaderState();
+    return new _CalendarHeaderState();
   }
 }
 
 ///
 /// The calendar state associated with the header.
 ///
-class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProviderStateMixin {
+class _CalendarHeaderState extends State<CalendarHeader>
+    with SingleTickerProviderStateMixin {
   double get maxExtent => 55.0;
 
   StreamSubscription<int> _subscription;
@@ -112,8 +113,12 @@ class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProvide
   void initState() {
     super.initState();
     _monthIndex = monthIndexFromTime(new DateTime.now());
-    _beginningMonthIndex = widget.beginningRangeDate != null ? monthIndexFromTime(widget.beginningRangeDate) : -1;
-    _endingMonthIndex = widget.endingRangeDate != null ? monthIndexFromTime(widget.endingRangeDate) : -1;
+    _beginningMonthIndex = widget.beginningRangeDate != null
+        ? monthIndexFromTime(widget.beginningRangeDate)
+        : -1;
+    _endingMonthIndex = widget.endingRangeDate != null
+        ? monthIndexFromTime(widget.endingRangeDate)
+        : -1;
     _controller = new AnimationController(duration: _kExpand, vsync: this);
     //sharedState = SharedCalendarState.get(widget.calendarKey);
     _easeInAnimation =
@@ -199,7 +204,9 @@ class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProvide
                 child: new Dismissible(
                   key: new ValueKey<int>(_monthIndex),
                   resizeDuration: null,
-                  dismissThresholds: const <DismissDirection, double>{DismissDirection.horizontal: 0.2},
+                  dismissThresholds: const <DismissDirection, double>{
+                    DismissDirection.horizontal: 0.2
+                  },
                   direction: direction,
                   onDismissed: (DismissDirection direction) {
                     setState(() {
@@ -250,11 +257,13 @@ class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProvide
       padding: new EdgeInsets.only(top: 10.0, left: 5.0, bottom: 10.0),
       decoration: new BoxDecoration(
         color: widget.color ?? Colors.white,
-        image: widget.bannerHeader != null ? new DecorationImage(
-          image: widget.bannerHeader,
-          fit: BoxFit.fitHeight,
-          alignment: new Alignment(1.0, 1.0),
-        ) : null,
+        image: widget.bannerHeader != null
+            ? new DecorationImage(
+                image: widget.bannerHeader,
+                fit: BoxFit.fitHeight,
+                alignment: new Alignment(1.0, 1.0),
+              )
+            : null,
       ),
       child: new GestureDetector(
         onTap: _handleOpen,
@@ -263,10 +272,11 @@ class CalendarHeaderState extends State<CalendarHeader> with SingleTickerProvide
           children: <Widget>[
             new Text(
               (myExpandedState
-                  ? MaterialLocalizations.of(context)
-                      .formatMonthYear(monthToShow(_monthIndex))
-                  : MaterialLocalizations.of(context)
-                      .formatMonthYear(currentTop)) + ' ',
+                      ? MaterialLocalizations.of(context)
+                          .formatMonthYear(monthToShow(_monthIndex))
+                      : MaterialLocalizations.of(context)
+                          .formatMonthYear(currentTop)) +
+                  ' ',
               style: widget.headerStyle ??
                   Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
             ),
@@ -411,7 +421,8 @@ class _CalendarMonthDisplay extends StatelessWidget {
     DateTime nowTmp = new DateTime.now();
     DateTime nowTime = new DateTime(nowTmp.year, nowTmp.month, nowTmp.day);
     DateTime topFirst = displayDate;
-    topFirst = topFirst.subtract(new Duration(days: topFirst.weekday - weekBeginsWithDay));
+    topFirst = topFirst
+        .subtract(new Duration(days: topFirst.weekday - weekBeginsWithDay));
     DateTime topSecond = topFirst.add(week);
     if (topSecond.day == 1) {
       // Opps, out by a week.

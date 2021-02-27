@@ -2,8 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="885dd9e8-c985-41ec-9648-e8fbed5a8d61" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/example/test/golden/calendar.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/flutter_calendar.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/flutter_calendar.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/test/calendar_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/test/calendar_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/calendar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/calendardaymarker.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendardaymarker.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/calendarevent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendarevent.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/calendarheader.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendarheader.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/sliverscrollviewcalendar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/sliverscrollviewcalendar.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/calendar_test.dart" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,10 +25,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="68" />
-    <option name="width" value="1862" />
-    <option name="height" value="1030" />
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1XKoA10kPtWfUCqYWiSuqczNmXf" />
   <component name="ProjectReloadState">
@@ -24,21 +39,31 @@
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="dart.analysis.tool.window.force.activate" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Flutter Test.tests in calendar_test.dart">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/example/lib/main.dart" />
       <method v="2" />
     </configuration>
+    <configuration name="tests in calendar_test.dart" type="FlutterTestConfigType" factoryName="Flutter Test" temporary="true" nameIsGenerated="true">
+      <option name="testFile" value="$PROJECT_DIR$/example/test/calendar_test.dart" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Flutter Test.tests in calendar_test.dart" />
+      </list>
+    </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>

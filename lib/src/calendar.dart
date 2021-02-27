@@ -1,13 +1,16 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timezone/timezone.dart';
-import 'calendarheader.dart';
+
 import 'calendarevent.dart';
-export 'calendarevent.dart';
-import 'sliverscrollviewcalendar.dart';
+import 'calendarheader.dart';
 import 'sliverlistcalendar.dart';
-import 'dart:async';
+import 'sliverscrollviewcalendar.dart';
+
+export 'calendarevent.dart';
 
 typedef List<CalendarEvent> CalendarEventBuiler(DateTime start, DateTime end);
 
@@ -59,29 +62,58 @@ class CalendarWidget extends StatefulWidget {
     this.headerExpandIconColor,
     this.tapToCloseHeader = true,
     this.header,
-  })  : assert((beginningRangeDate == null || beginningRangeDate.compareTo(initialDate) <= 0) 
-          && (endingRangeDate == null || initialDate.compareTo(endingRangeDate) <= 0)),
+  })  : assert((beginningRangeDate == null ||
+                beginningRangeDate.compareTo(initialDate) <= 0) &&
+            (endingRangeDate == null ||
+                initialDate.compareTo(endingRangeDate) <= 0)),
         location = location ?? local,
         initialScrollOffset = initialScrollOffset ??
             //new DateTime.now().microsecondsSinceEpoch.toDouble(),
             initialDate.microsecondsSinceEpoch.toDouble(),
         super(key: key);
-        
+
+  /// The initial date to show the calendar for.
   final TZDateTime initialDate;
   final TZDateTime beginningRangeDate;
   final TZDateTime endingRangeDate;
+
+  /// The type of the calendar to displau.
   final CalendarViewType view;
-  final int weekBeginsWithDay; // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
+
+  /// which day to begin the week for when displaying a week
+  final int
+      weekBeginsWithDay; // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
+  /// the timezone locatrion to use fdor the days.
   final Location location;
+
+  /// Where to start the scroll at.
   final double initialScrollOffset;
+
+  /// Returns the events to use to display on the screen.
   final CalendarEventBuiler getEvents;
+
+  /// building the widget to display for each of the events in the calendar.
   final CalendarWidgetBuilder buildItem;
+
+  /// the header to use at the top of each momth.
   final ImageProvider monthHeader;
+
+  /// the header to use at the top of the banner.
   final ImageProvider bannerHeader;
+
+  /// The color of the header.
   final Color headerColor;
+
+  /// The style to use for displaying the header for the month.
   final TextStyle headerMonthStyle;
+
+  /// The color of the expand icon for the header.
   final Color headerExpandIconColor;
+
+  /// If you can close the header with a tap.
   final bool tapToCloseHeader;
+
+  /// The header to display.
   final Widget header;
 
   @override
@@ -90,6 +122,9 @@ class CalendarWidget extends StatefulWidget {
   }
 }
 
+///
+/// The state for the calendar widget.
+///
 class CalendarWidgetState extends State<CalendarWidget> {
   int _currentTopDisplayIndex;
   Map<int, List<CalendarEvent>> events = <int, List<CalendarEvent>>{};
@@ -102,6 +137,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
   ScrollController controller;
   bool _headerExpanded = false;
   SliverScrollViewCalendarElement element;
+  bool _disposed = false;
 
   @override
   void initState() {
@@ -155,12 +191,17 @@ class CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   void dispose() {
-    super.dispose();
-    _updateController?.close();
-    _updateController = null;
-    _headerExpandController?.close();
-    _headerExpandController = null;
-    _headerBroadcastStream = null;
+    // stop it being disposed twice, althougn not sure why it is being disposed
+    // twice.
+    if (!_disposed) {
+      _disposed = true;
+      super.dispose();
+      _updateController?.close();
+      _updateController = null;
+      _headerExpandController?.close();
+      _headerExpandController = null;
+      _headerBroadcastStream = null;
+    }
   }
 
   ///
@@ -226,13 +267,22 @@ class CalendarWidgetState extends State<CalendarWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         widget.header ??
-            new CalendarHeader(this, widget.bannerHeader, widget.location,
-                widget.headerColor, widget.headerMonthStyle, widget.headerExpandIconColor, widget.weekBeginsWithDay, 
-                null, null, widget.beginningRangeDate, widget.endingRangeDate),
-        new Expanded(
-          child: new Padding(
-            padding: new EdgeInsets.only(top: 5.0),
-            child: new WrappedScrollViewCalendar(
+            CalendarHeader(
+                this,
+                widget.bannerHeader,
+                widget.location,
+                widget.headerColor,
+                widget.headerMonthStyle,
+                widget.headerExpandIconColor,
+                widget.weekBeginsWithDay,
+                null,
+                null,
+                widget.beginningRangeDate,
+                widget.endingRangeDate),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 5.0),
+            child: WrappedScrollViewCalendar(
               state: this,
               initialDate: widget.initialDate,
               beginningRangeDate: widget.beginningRangeDate,
