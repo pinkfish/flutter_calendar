@@ -18,7 +18,6 @@ jobs:
           cmd: yq w -i pubspec.yaml 'version' "${GITHUB_REF#refs/tags/}"
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '1.17.1'
           channel: 'stable'
       - run: dart --version
       - run: flutter --version
