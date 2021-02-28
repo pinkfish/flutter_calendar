@@ -24,3 +24,7 @@ how flutter normally works.
 ## [0.2.2] - Jan 21rd 2021
 
 * Upgrade the i18n bits.
+
+## [0.3.0] - Feb 28rd 2021
+
+* Upgrade the android parts and fix the double dispose.
