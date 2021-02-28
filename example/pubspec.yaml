@@ -20,7 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: any
-  mockito: ^5.0.0
+  mockito: ^4.1.4
   golden_toolkit: ^0.8.0
 
 
