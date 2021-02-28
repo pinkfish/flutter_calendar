@@ -23,6 +23,7 @@ jobs:
       - run: flutter --version
       - run: flutter pub get
       - run: flutter test
+        working-directory: example
       - run: flutter pub publish
       - uses: EndBug/add-and-commit@v4
         with:
