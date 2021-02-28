@@ -22,7 +22,6 @@ jobs:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with:
-          flutter-version: '1.17.1'
           channel: 'stable'
       - run: dart --version
       - run: flutter --version
