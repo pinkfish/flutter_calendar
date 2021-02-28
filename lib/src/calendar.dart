@@ -137,7 +137,6 @@ class CalendarWidgetState extends State<CalendarWidget> {
   ScrollController controller;
   bool _headerExpanded = false;
   SliverScrollViewCalendarElement element;
-  bool _disposed = false;
 
   @override
   void initState() {
@@ -193,15 +192,12 @@ class CalendarWidgetState extends State<CalendarWidget> {
   void dispose() {
     // stop it being disposed twice, althougn not sure why it is being disposed
     // twice.
-    if (!_disposed) {
-      _disposed = true;
-      super.dispose();
-      _updateController?.close();
-      _updateController = null;
-      _headerExpandController?.close();
-      _headerExpandController = null;
-      _headerBroadcastStream = null;
-    }
+    super.dispose();
+    _updateController?.close();
+    _updateController = null;
+    _headerExpandController?.close();
+    _headerExpandController = null;
+    _headerBroadcastStream = null;
   }
 
   ///

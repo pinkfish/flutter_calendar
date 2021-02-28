@@ -508,7 +508,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
   @override
   void unmount() {
     super.unmount();
-    _state.dispose();
+    //_state.dispose();
     _topIndexChangedSubscription?.cancel();
     _topIndexChangedSubscription = null;
   }
