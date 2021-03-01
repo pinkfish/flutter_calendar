@@ -13,6 +13,7 @@ dependencies:
   intl: any
   flutter_native_timezone: ^1.0.4
   timezone: ^0.6.1
+  clock: ^1.1.0
 
 dev_dependencies:
   test: any
