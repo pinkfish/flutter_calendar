@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -68,7 +69,6 @@ class CalendarWidget extends StatefulWidget {
                 initialDate.compareTo(endingRangeDate) <= 0)),
         location = location ?? local,
         initialScrollOffset = initialScrollOffset ??
-            //new DateTime.now().microsecondsSinceEpoch.toDouble(),
             initialDate.microsecondsSinceEpoch.toDouble(),
         super(key: key);
 

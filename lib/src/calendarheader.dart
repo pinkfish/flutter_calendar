@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:timezone/timezone.dart';
@@ -112,7 +113,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
   @override
   void initState() {
     super.initState();
-    _monthIndex = monthIndexFromTime(new DateTime.now());
+    _monthIndex = monthIndexFromTime( clock.now());
     _beginningMonthIndex = widget.beginningRangeDate != null
         ? monthIndexFromTime(widget.beginningRangeDate)
         : -1;
@@ -418,7 +419,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime nowTmp = new DateTime.now();
+    DateTime nowTmp =  clock.now();
     DateTime nowTime = new DateTime(nowTmp.year, nowTmp.month, nowTmp.day);
     DateTime topFirst = displayDate;
     topFirst = topFirst
