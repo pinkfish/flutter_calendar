@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="885dd9e8-c985-41ec-9648-e8fbed5a8d61" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis_options.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/analysis_options.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/calendar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendar.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/calendardaymarker.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendardaymarker.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/calendarevent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendarevent.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/calendarheader.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/calendarheader.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/sliverlistcalendar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/sliverlistcalendar.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/sliverscrollviewcalendar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/sliverscrollviewcalendar.dart" afterDir="false" />
-    </list>
+    <list default="true" id="885dd9e8-c985-41ec-9648-e8fbed5a8d61" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

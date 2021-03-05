@@ -24,7 +24,7 @@ jobs:
       - run: flutter pub get
       - run: flutter test
         working-directory: example
-      - run: flutter pub publish
+      - run: flutter pub publish --force
       - uses: EndBug/add-and-commit@v4
         with:
           author_name: David Bennett
