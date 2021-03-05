@@ -28,3 +28,7 @@ how flutter normally works.
 ## [0.3.0] - Feb 28rd 2021
 
 * Upgrade the android parts and fix the double dispose.
+
+## [0.4.0] - Mar 4th 2021
+
+* Update to null safety
