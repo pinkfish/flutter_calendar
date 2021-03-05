@@ -9,19 +9,19 @@ dependencies:
   flutter_native_timezone: ^1.0.4
   sliver_calendar:
     path: ../
-  timezone:  ^0.6.1
+  timezone:  ^0.7.0-nullsafety.0
      # Need to use git here since there is a bug in the main repository.
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test: any
-  mockito: ^4.1.4
-  golden_toolkit: ^0.8.0
+  mockito: ^5.0.0
+  golden_toolkit: ^0.9.0
 
 
 # For information on the generic Dart part of this file, see the
