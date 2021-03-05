@@ -1,7 +1,7 @@
 import 'package:timezone/timezone.dart';
 
 /// One day duration to use in the rest of the system.
-const Duration oneDay = const Duration(days: 1);
+final Duration oneDay = Duration(days: 1);
 
 ///
 /// The source for the calendar, this is where to get all the events from.

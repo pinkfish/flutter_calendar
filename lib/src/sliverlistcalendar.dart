@@ -106,7 +106,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
       if (childParentData.index == newTopScrollIndex) {
         newTopScrollIndex = null;
         if (childParentData.layoutOffset != scrollOffset) {
-          geometry = new SliverGeometry(
+          geometry = SliverGeometry(
             scrollOffsetCorrection:
                 childParentData.layoutOffset! - scrollOffset,
           );
@@ -139,7 +139,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           // We ran out of children before reaching the scroll offset.
           // We must inform our parent that this sliver cannot fulfill
           // its contract and that we need a scroll offset correction.
-          geometry = new SliverGeometry(
+          geometry = SliverGeometry(
             scrollOffsetCorrection: -scrollOffset,
           );
           //print("Geometry correct ${childParentData.layoutOffset}");
@@ -165,7 +165,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           earliestUsefulChild = insertAndLayoutLeadingChild(childConstraints,
               parentUsesSize: true);
         }
-        geometry = new SliverGeometry(
+        geometry = SliverGeometry(
           scrollOffsetCorrection: correction - earliestScrollOffset,
         );
         final SliverMultiBoxAdaptorParentData childParentData =
@@ -191,7 +191,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           newTopScrollIndex = null;
           // Fix the geometry to match where we are.
           if (childParentData.layoutOffset != scrollOffset) {
-            geometry = new SliverGeometry(
+            geometry = SliverGeometry(
               scrollOffsetCorrection:
                   childParentData.layoutOffset! - scrollOffset,
             );
@@ -231,22 +231,23 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
     // that some children beyond that one have also been laid out.
 
     bool inLayoutRange = true;
-    RenderBox child = earliestUsefulChild!;
+    RenderBox? child = earliestUsefulChild!;
     int index = indexOf(child);
     double endScrollOffset = childScrollOffset(child)! + paintExtentOf(child);
     bool advance() {
       // returns true if we advanced, false if we have no more children
       // This function is used in two different places below, to avoid code duplication.
+      assert(child != null);
       if (child == trailingChildWithLayout) {
         inLayoutRange = false;
       }
-      child = childAfter(child)!;
+      child = childAfter(child!);
       if (child == null) {
         inLayoutRange = false;
       }
       index += 1;
       if (!inLayoutRange) {
-        if (child == null || indexOf(child) != index) {
+        if (child == null || indexOf(child!) != index) {
           // We are missing a child. Insert it (and lay it out) if possible.
           child = insertAndLayoutChild(
             childConstraints,
@@ -260,16 +261,16 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
           }
         } else {
           // Lay out the child.
-          child.layout(childConstraints, parentUsesSize: true);
+          child!.layout(childConstraints, parentUsesSize: true);
         }
         trailingChildWithLayout = child;
       }
       assert(child != null);
       final SliverMultiBoxAdaptorParentData childParentData =
-          child.parentData as SliverMultiBoxAdaptorParentData;
+          child!.parentData as SliverMultiBoxAdaptorParentData;
       childParentData.layoutOffset = endScrollOffset;
       assert(childParentData.index == index);
-      endScrollOffset = childScrollOffset(child)! + paintExtentOf(child);
+      endScrollOffset = childScrollOffset(child!)! + paintExtentOf(child!);
       //print('froggy frogg ${childParentData.layoutOffset}');
       return true;
     }
@@ -285,7 +286,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
         assert(firstChild == lastChild);
         final double extent =
             childScrollOffset(lastChild!)! + paintExtentOf(lastChild!);
-        geometry = new SliverGeometry(
+        geometry = SliverGeometry(
           scrollExtent: extent,
           paintExtent: 0.0,
           maxPaintExtent: extent,
@@ -305,7 +306,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
           // Fix the geometry to match where we are.
           if (childParentData.layoutOffset != scrollOffset) {
-            geometry = new SliverGeometry(
+            geometry = SliverGeometry(
               scrollOffsetCorrection:
                   childParentData.layoutOffset! - scrollOffset,
             );
@@ -329,10 +330,10 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
     // Finally count up all the remaining children and label them as garbage.
     if (child != null) {
-      child = childAfter(child)!;
+      child = childAfter(child!);
       while (child != null) {
         trailingGarbage += 1;
-        child = childAfter(child)!;
+        child = childAfter(child!);
       }
     }
 
@@ -364,7 +365,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
 
     SliverMultiBoxAdaptorParentData? childParentData =
         firstChild!.parentData as SliverMultiBoxAdaptorParentData?;
-    geometry = new SliverGeometry(
+    geometry = SliverGeometry(
       scrollOffsetCorrection: forceScrollUpdate
           ? childParentData!.layoutOffset! - scrollOffset
           : null,
@@ -406,7 +407,7 @@ class SliverListCenter extends SliverMultiBoxAdaptorWidget {
   RenderSliverCenterList createRenderObject(BuildContext context) {
     final SliverMultiBoxAdaptorElement element =
         context as SliverMultiBoxAdaptorElement;
-    RenderSliverCenterList ret = new RenderSliverCenterList(
+    RenderSliverCenterList ret = RenderSliverCenterList(
         childManager: element, startIndex: startIndex, state: state);
     state.renderSliverList = ret;
     return ret;
@@ -446,7 +447,7 @@ class SliverListCenter extends SliverMultiBoxAdaptorWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-        new DiagnosticsProperty<SliverChildDelegate>('delegate', delegate));
+    properties
+        .add(DiagnosticsProperty<SliverChildDelegate>('delegate', delegate));
   }
 }

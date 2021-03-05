@@ -201,7 +201,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
         (CalendarEvent e, CalendarEvent e2) => e.instant.compareTo(e2.instant));
     // Make sure we clean up the old indexes when we update.
     events.clear();
-    if (rawEvents.length > 0) {
+    if (rawEvents.isNotEmpty) {
       int curIndex = CalendarEvent.indexFromMilliseconds(
           rawEvents[0].instant, widget.location);
       int sliceIndex = 0;
@@ -248,7 +248,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
+    return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -8,9 +8,9 @@ class CalendarDayMarker extends StatelessWidget {
   /// The height must be positive.
   const CalendarDayMarker(
       {Key? key,
-      this.height: 16.0,
-      this.radius: 5.0,
-      this.indent: 0.0,
+      this.height = 16.0,
+      this.radius = 5.0,
+      this.indent = 0.0,
       this.color})
       : assert(height >= 0.0),
         super(key: key);
@@ -82,7 +82,7 @@ class _CalendarDayMarkerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(_offset, _radius, new Paint()..color = _color!);
+    canvas.drawCircle(_offset, _radius, Paint()..color = _color!);
   }
 
   @override
