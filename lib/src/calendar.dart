@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -45,28 +44,26 @@ class CalendarWidget extends StatefulWidget {
   /// based on the initial date.
   ///
   CalendarWidget({
-    @required this.initialDate,
-    @required this.buildItem,
-    @required this.getEvents,
-    this.beginningRangeDate,
-    this.endingRangeDate,
+    required this.initialDate,
+    required this.buildItem,
+    required this.getEvents,
+    required this.beginningRangeDate,
+    required this.endingRangeDate,
     this.bannerHeader,
     this.monthHeader,
-    Key key,
+    Key? key,
     this.view = CalendarViewType.Schedule,
     this.weekBeginsWithDay = 0,
-    Location location,
-    String calendarKey,
-    double initialScrollOffset,
+    Location? location,
+    String? calendarKey,
+    double? initialScrollOffset,
     this.headerColor,
     this.headerMonthStyle,
     this.headerExpandIconColor,
     this.tapToCloseHeader = true,
     this.header,
-  })  : assert((beginningRangeDate == null ||
-                beginningRangeDate.compareTo(initialDate) <= 0) &&
-            (endingRangeDate == null ||
-                initialDate.compareTo(endingRangeDate) <= 0)),
+  })  : assert((beginningRangeDate.compareTo(initialDate) <= 0) &&
+            (initialDate.compareTo(endingRangeDate) <= 0)),
         location = location ?? local,
         initialScrollOffset = initialScrollOffset ??
             initialDate.microsecondsSinceEpoch.toDouble(),
@@ -96,25 +93,25 @@ class CalendarWidget extends StatefulWidget {
   final CalendarWidgetBuilder buildItem;
 
   /// the header to use at the top of each momth.
-  final ImageProvider monthHeader;
+  final ImageProvider? monthHeader;
 
   /// the header to use at the top of the banner.
-  final ImageProvider bannerHeader;
+  final ImageProvider? bannerHeader;
 
   /// The color of the header.
-  final Color headerColor;
+  final Color? headerColor;
 
   /// The style to use for displaying the header for the month.
-  final TextStyle headerMonthStyle;
+  final TextStyle? headerMonthStyle;
 
   /// The color of the expand icon for the header.
-  final Color headerExpandIconColor;
+  final Color? headerExpandIconColor;
 
   /// If you can close the header with a tap.
   final bool tapToCloseHeader;
 
   /// The header to display.
-  final Widget header;
+  final Widget? header;
 
   @override
   State createState() {
@@ -126,23 +123,27 @@ class CalendarWidget extends StatefulWidget {
 /// The state for the calendar widget.
 ///
 class CalendarWidgetState extends State<CalendarWidget> {
-  int _currentTopDisplayIndex;
+  CalendarWidgetState() {
+    _headerBroadcastStream = _headerExpandController.stream.asBroadcastStream();
+    _indexBroadcastStream = _updateController.stream.asBroadcastStream();
+  }
+
+  late int _currentTopDisplayIndex;
   Map<int, List<CalendarEvent>> events = <int, List<CalendarEvent>>{};
-  Location location;
-  StreamController<int> _updateController = new StreamController<int>();
-  StreamController<bool> _headerExpandController = new StreamController<bool>();
-  Stream<bool> _headerBroadcastStream;
-  Stream<int> _indexBroadcastStream;
-  RenderSliverCenterList renderSliverList;
-  ScrollController controller;
+  StreamController<int> _updateController = StreamController<int>();
+  StreamController<bool> _headerExpandController = StreamController<bool>();
+  late Stream<bool> _headerBroadcastStream;
+  late Stream<int> _indexBroadcastStream;
+  late RenderSliverCenterList renderSliverList;
   bool _headerExpanded = false;
-  SliverScrollViewCalendarElement element;
+  SliverScrollViewCalendarElement? element;
+  ScrollController? controller;
 
   @override
   void initState() {
-    super.initState();
-    currentTopDisplayIndex = widget.initialDate.millisecondsSinceEpoch ~/
+    _currentTopDisplayIndex = widget.initialDate.millisecondsSinceEpoch ~/
         Duration.millisecondsPerDay;
+    super.initState();
   }
 
   /// Sets the current top index and tells people about the change.
@@ -172,19 +173,12 @@ class CalendarWidgetState extends State<CalendarWidget> {
   /// top of the display.
   ///
   Stream<int> get indexChangeStream {
-    if (_indexBroadcastStream == null) {
-      _indexBroadcastStream = _updateController.stream.asBroadcastStream();
-    }
     return _indexBroadcastStream;
   }
 
   /// Broadcast stream that is updated with the current state of the header
   /// when it changes.
-  Stream<bool> get headerExpandedChangeStream {
-    if (_headerBroadcastStream == null) {
-      _headerBroadcastStream =
-          _headerExpandController.stream.asBroadcastStream();
-    }
+  Stream<bool>? get headerExpandedChangeStream {
     return _headerBroadcastStream;
   }
 
@@ -193,11 +187,8 @@ class CalendarWidgetState extends State<CalendarWidget> {
     // stop it being disposed twice, althougn not sure why it is being disposed
     // twice.
     super.dispose();
-    _updateController?.close();
-    _updateController = null;
-    _headerExpandController?.close();
-    _headerExpandController = null;
-    _headerBroadcastStream = null;
+    _updateController.close();
+    _headerExpandController.close();
   }
 
   ///
@@ -211,13 +202,13 @@ class CalendarWidgetState extends State<CalendarWidget> {
     // Make sure we clean up the old indexes when we update.
     events.clear();
     if (rawEvents.length > 0) {
-      int curIndex =
-          CalendarEvent.indexFromMilliseconds(rawEvents[0].instant, location);
+      int curIndex = CalendarEvent.indexFromMilliseconds(
+          rawEvents[0].instant, widget.location);
       int sliceIndex = 0;
       // Get the offsets into the array.
       for (int i = 1; i < rawEvents.length; i++) {
-        int index =
-            CalendarEvent.indexFromMilliseconds(rawEvents[i].instant, location);
+        int index = CalendarEvent.indexFromMilliseconds(
+            rawEvents[i].instant, widget.location);
         if (index != curIndex) {
           if (sliceIndex != i) {
             events[curIndex] = rawEvents.sublist(sliceIndex, i);
@@ -301,7 +292,9 @@ class CalendarWidgetState extends State<CalendarWidget> {
   /// *not* correct and not in local time.
   ///
   void scrollToDay(DateTime time) {
-    element.scrollToDate(time);
+    if (element != null) {
+      element!.scrollToDate(time);
+    }
   }
 
   ///
@@ -309,6 +302,8 @@ class CalendarWidgetState extends State<CalendarWidget> {
   /// This causes the system to re-ask for the events.
   ///
   void updateEvents() {
-    element.updateEvents();
+    if (element != null) {
+      element!.updateEvents();
+    }
   }
 }

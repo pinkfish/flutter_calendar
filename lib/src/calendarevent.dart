@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 
 /// One day duration to use in the rest of the system.
@@ -23,9 +22,9 @@ enum CalendarViewType { Schedule, Week, Month }
 ///
 class CalendarEvent {
   CalendarEvent({
-    @required this.index,
-    @required this.instant,
-    @required TZDateTime instantEnd,
+    required this.index,
+    required this.instant,
+    required TZDateTime instantEnd,
   }) : _instantEnd = instantEnd;
 
   /// The instant to display the event at.
@@ -42,7 +41,7 @@ class CalendarEvent {
   static const int _monthOffset = 31;
 
   /// get the index from the milliseconds that are passed in.
-  static int indexFromMilliseconds(DateTime time, Location loc) {
+  static int indexFromMilliseconds(DateTime time, Location? loc) {
     return time.year * _yearOffset +
         (time.month - 1) * _monthOffset +
         time.day -

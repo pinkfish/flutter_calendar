@@ -37,7 +37,7 @@ typedef HeaderDayIndicator = Widget Function(
 /// The calendar events are the events on this day.  It can be an empty array.
 ///
 typedef EventIndicator = Widget Function(
-    Widget button, List<CalendarEvent> events);
+    Widget button, List<CalendarEvent>? events);
 
 ///
 /// Displays the header for the calendar.  This handles the title with the
@@ -63,17 +63,17 @@ class CalendarHeader extends StatefulWidget {
       this.eventIndicator,
       this.beginningRangeDate,
       this.endingRangeDate)
-      : _location = location ?? local;
+      : _location = location;
 
   final Location _location;
   final CalendarWidgetState state;
-  final ImageProvider bannerHeader;
-  final Color color;
-  final TextStyle headerStyle;
-  final Color expandIconColor;
+  final ImageProvider? bannerHeader;
+  final Color? color;
+  final TextStyle? headerStyle;
+  final Color? expandIconColor;
   final int weekBeginsWithDay;
-  final EventIndicator eventIndicator;
-  final HeaderDayIndicator dayIndicator;
+  final EventIndicator? eventIndicator;
+  final HeaderDayIndicator? dayIndicator;
   final TZDateTime beginningRangeDate;
   final TZDateTime endingRangeDate;
 
@@ -88,19 +88,27 @@ class CalendarHeader extends StatefulWidget {
 ///
 class _CalendarHeaderState extends State<CalendarHeader>
     with SingleTickerProviderStateMixin {
+  _CalendarHeaderState() {
+    _monthIndex = monthIndexFromTime(clock.now());
+    _easeInAnimation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _iconTurns = Tween<double>(begin: 0.0, end: 0.5).animate(_easeInAnimation);
+  }
+
   double get maxExtent => 55.0;
 
-  StreamSubscription<int> _subscription;
-  StreamSubscription<bool> _headerExpandedSubscription;
-  StreamSubscription<int> _indexChangeSubscription;
+  late StreamSubscription<int> _subscription;
+  late StreamSubscription<bool> _headerExpandedSubscription;
+  late StreamSubscription<int> _indexChangeSubscription;
   //SharedCalendarState sharedState;
-  AnimationController _controller;
-  CurvedAnimation _easeInAnimation;
-  Animation<double> _iconTurns;
+  late AnimationController _controller =
+      AnimationController(duration: _kExpand, vsync: this);
+  late CurvedAnimation _easeInAnimation;
+  late Animation<double> _iconTurns;
   bool myExpandedState = false;
-  int _monthIndex;
-  int _beginningMonthIndex;
-  int _endingMonthIndex;
+  late int _monthIndex;
+  int? _beginningMonthIndex;
+  int? _endingMonthIndex;
 
   int monthIndexFromTime(DateTime time) {
     return (time.year - 1970) * 12 + (time.month - 1);
@@ -113,19 +121,8 @@ class _CalendarHeaderState extends State<CalendarHeader>
   @override
   void initState() {
     super.initState();
-    _monthIndex = monthIndexFromTime( clock.now());
-    _beginningMonthIndex = widget.beginningRangeDate != null
-        ? monthIndexFromTime(widget.beginningRangeDate)
-        : -1;
-    _endingMonthIndex = widget.endingRangeDate != null
-        ? monthIndexFromTime(widget.endingRangeDate)
-        : -1;
-    _controller = new AnimationController(duration: _kExpand, vsync: this);
-    //sharedState = SharedCalendarState.get(widget.calendarKey);
-    _easeInAnimation =
-        new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    _iconTurns =
-        new Tween<double>(begin: 0.0, end: 0.5).animate(_easeInAnimation);
+    _beginningMonthIndex = monthIndexFromTime(widget.beginningRangeDate);
+    _endingMonthIndex = monthIndexFromTime(widget.endingRangeDate);
     _indexChangeSubscription =
         widget.state.indexChangeStream.listen((int newTop) {
       setState(() {
@@ -137,7 +134,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
       });
     });
     _headerExpandedSubscription =
-        widget.state.headerExpandedChangeStream.listen((bool change) {
+        widget.state.headerExpandedChangeStream!.listen((bool change) {
       if (myExpandedState != change) {
         setState(() {
           myExpandedState = change;
@@ -162,14 +159,10 @@ class _CalendarHeaderState extends State<CalendarHeader>
   @override
   void dispose() {
     super.dispose();
-    _subscription?.cancel();
-    _subscription = null;
-    _controller?.dispose();
-    _controller = null;
-    _headerExpandedSubscription?.cancel();
-    _headerExpandedSubscription = null;
-    _indexChangeSubscription?.cancel();
-    _indexChangeSubscription = null;
+    _subscription.cancel();
+    _controller.dispose();
+    _headerExpandedSubscription.cancel();
+    _indexChangeSubscription.cancel();
   }
 
   void _handleOpen() {
@@ -183,7 +176,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
     });
   }
 
-  Widget _buildChildren(BuildContext context, Widget child) {
+  Widget _buildChildren(BuildContext context, Widget? child) {
     DismissDirection direction = DismissDirection.horizontal;
     if (_beginningMonthIndex == _monthIndex) {
       direction = DismissDirection.endToStart;
@@ -203,7 +196,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
                 constraints:
                     new BoxConstraints(minHeight: 230.0, maxHeight: 230.0),
                 child: new Dismissible(
-                  key: new ValueKey<int>(_monthIndex),
+                  key: new ValueKey<int?>(_monthIndex),
                   resizeDuration: null,
                   dismissThresholds: const <DismissDirection, double>{
                     DismissDirection.horizontal: 0.2
@@ -260,7 +253,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
         color: widget.color ?? Colors.white,
         image: widget.bannerHeader != null
             ? new DecorationImage(
-                image: widget.bannerHeader,
+                image: widget.bannerHeader!,
                 fit: BoxFit.fitHeight,
                 alignment: new Alignment(1.0, 1.0),
               )
@@ -279,7 +272,10 @@ class _CalendarHeaderState extends State<CalendarHeader>
                           .formatMonthYear(currentTop)) +
                   ' ',
               style: widget.headerStyle ??
-                  Theme.of(context).textTheme.title.copyWith(fontSize: 25.0),
+                  Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .copyWith(fontSize: 25.0),
             ),
             new RotationTransition(
               turns: _iconTurns,
@@ -308,9 +304,6 @@ class _CalendarEventIndicator extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_radius == null) {
-      return;
-    }
     canvas.drawCircle(new Offset(_radius, _radius), _radius,
         new Paint()..color = Colors.black);
   }
@@ -332,18 +325,18 @@ class _CalendarMonthDisplay extends StatelessWidget {
   final Location location;
   final DateTime displayDate;
   final int weekBeginsWithDay;
-  final HeaderDayIndicator dayIndicator;
-  final EventIndicator eventIndicator;
+  final HeaderDayIndicator? dayIndicator;
+  final EventIndicator? eventIndicator;
 
   static const Duration week = const Duration(days: 7);
 
   Widget _eventIndicator(Widget button, int eventIndex) {
     if (sharedState.events.containsKey(eventIndex)) {
       if (eventIndicator != null) {
-        return eventIndicator(button, sharedState.events[eventIndex]);
+        return eventIndicator!(button, sharedState.events[eventIndex]);
       }
       List<Widget> eventIndicators = <Widget>[];
-      for (CalendarEvent event in sharedState.events[eventIndex]) {
+      for (CalendarEvent event in sharedState.events[eventIndex]!) {
         eventIndicators.add(
           new SizedBox(
             height: 4.0,
@@ -379,7 +372,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
       );
     } else {
       if (eventIndicator != null) {
-        return eventIndicator(button, <CalendarEvent>[]);
+        return eventIndicator!(button, <CalendarEvent>[]);
       }
       return new SizedBox(
         width: 40.0,
@@ -396,19 +389,21 @@ class _CalendarMonthDisplay extends StatelessWidget {
       button = new SizedBox(width: 1.0);
     } else {
       if (dayIndicator != null) {
-        button = dayIndicator(theme, day, nowTime);
+        button = dayIndicator!(theme, day, nowTime);
       } else {
         button = new Center(
-          child: new FlatButton(
-            color: day.isAtSameMomentAs(nowTime)
-                ? theme.accentColor
-                : day.isAtSameMomentAs(displayDate)
-                    ? Colors.grey.shade200
-                    : Colors.white,
-            shape: new CircleBorder(),
+          child: new TextButton(
+            style: TextButton.styleFrom(
+              primary: day.isAtSameMomentAs(nowTime)
+                  ? theme.accentColor
+                  : day.isAtSameMomentAs(displayDate)
+                      ? Colors.grey.shade200
+                      : Colors.white,
+              shape: new CircleBorder(),
+              padding: EdgeInsets.zero,
+            ),
             child: new Text(day.day.toString()),
             onPressed: () => sharedState.scrollToDay(day),
-            padding: EdgeInsets.zero,
           ),
         );
       }
@@ -419,7 +414,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime nowTmp =  clock.now();
+    DateTime nowTmp = clock.now();
     DateTime nowTime = new DateTime(nowTmp.year, nowTmp.month, nowTmp.day);
     DateTime topFirst = displayDate;
     topFirst = topFirst

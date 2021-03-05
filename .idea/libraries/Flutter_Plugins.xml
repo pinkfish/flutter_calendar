@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
-    <CLASSES>
-      <root url="file://$PROJECT_DIR$/../development/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_native_timezone-1.0.4" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

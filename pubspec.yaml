@@ -4,19 +4,18 @@ version: 0.3.0
 homepage: https://github.com/pinkfish/flutter_calendar
 
 environment:
-  sdk: '>=2.10.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: any
-  flutter_native_timezone: ^1.0.4
-  timezone: ^0.6.1
+  intl: ^0.17.0
+  timezone: ^0.7.0-nullsafety.0
   clock: ^1.1.0
 
 dev_dependencies:
-  test: any
+  test: ^1.16.5
   flutter_test:
     sdk: flutter
 

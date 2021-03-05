@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 class CalendarDayMarker extends StatelessWidget {
   /// The height must be positive.
   const CalendarDayMarker(
-      {Key key,
+      {Key? key,
       this.height: 16.0,
       this.radius: 5.0,
       this.indent: 0.0,
@@ -36,12 +36,11 @@ class CalendarDayMarker extends StatelessWidget {
   ///   color: Colors.deepOrange,
   /// )
   /// ```
-  final Color color;
+  final Color? color;
 
   /// Create a side for the border.
   static BorderSide createBorderSide(BuildContext context,
-      {Color color, double width: 0.0}) {
-    assert(width != null);
+      {Color? color, double width: 0.0}) {
     return BorderSide(
       color: color ?? Theme.of(context).dividerColor,
       width: width,
@@ -79,14 +78,11 @@ class _CalendarDayMarkerPainter extends CustomPainter {
 
   final double _radius;
   final Offset _offset;
-  final Color _color;
+  final Color? _color;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_radius == null) {
-      return;
-    }
-    canvas.drawCircle(_offset, _radius, new Paint()..color = _color);
+    canvas.drawCircle(_offset, _radius, new Paint()..color = _color!);
   }
 
   @override
