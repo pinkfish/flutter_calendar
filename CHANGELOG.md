@@ -32,3 +32,7 @@ how flutter normally works.
 ## [0.4.0] - Mar 4th 2021
 
 * Update to null safety
+
+## [0.4.1] - Mar 4th 2021
+
+* Bug in null safety
