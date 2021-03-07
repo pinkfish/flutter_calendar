@@ -253,7 +253,7 @@ class RenderSliverCenterList extends RenderSliverMultiBoxAdaptor {
             childConstraints,
             after: trailingChildWithLayout,
             parentUsesSize: true,
-          )!;
+          );
           if (child == null) {
             // We have run out of children.
             debugPrint('No children $geometry');
