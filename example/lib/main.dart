@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:sliver_calendar/sliver_calendar.dart';
-import 'package:timezone/timezone.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:sliver_calendar/sliver_calendar.dart';
+import 'package:timezone/timezone.dart';
 
 void main() async {
   // Comment this line to enable debug printing...
@@ -34,12 +35,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: const <LocalizationsDelegate<MaterialLocalizations>>[
+      localizationsDelegates: const <
+          LocalizationsDelegate<MaterialLocalizations>>[
         GlobalMaterialLocalizations.delegate
       ],
       supportedLocales: const <Locale>[
-        const Locale('en', ''), 
-        const Locale('fr', ''), 
+        const Locale('en', ''),
+        const Locale('fr', ''),
       ],
       home: new MyHomePage(title: 'Flutter Calendar demo'),
     );
@@ -72,10 +74,10 @@ class _MyHomePageState extends State<MyHomePage> {
   List<CalendarEvent> getEvents(DateTime start, DateTime end) {
     if (loc != null && events.length == 0) {
       TZDateTime nowTime =
-      new TZDateTime.now(loc).subtract(new Duration(days: 5));
+          new TZDateTime.now(loc).subtract(new Duration(days: 5));
       for (int i = 0; i < 20; i++) {
         TZDateTime start =
-        nowTime.add(new Duration(days: i + random.nextInt(10)));
+            nowTime.add(new Duration(days: i + random.nextInt(10)));
         events.add(new CalendarEvent(
             index: i,
             instant: start,
@@ -84,7 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return events;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 return new Expanded(
                   child: new CalendarWidget(
                     initialDate: nowTime,
-                    beginningRangeDate: nowTime.subtract(new Duration(days: 31)),
-                    endingRangeDate: nowTime.add(new Duration(days: 31)),
                     location: loc,
                     buildItem: buildItem,
                     getEvents: getEvents,
@@ -112,7 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         new AssetImage("assets/images/calendarheader.png"),
                     monthHeader:
                         new AssetImage("assets/images/calendarbanner.jpg"),
-                    weekBeginsWithDay: 1, // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
+                    weekBeginsWithDay:
+                        1, // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
                   ),
                 );
               } else {

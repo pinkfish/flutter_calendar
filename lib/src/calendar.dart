@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,7 +13,10 @@ import 'sliverscrollviewcalendar.dart';
 
 export 'calendarevent.dart';
 
-typedef List<CalendarEvent> CalendarEventBuiler(DateTime start, DateTime end);
+///
+/// Create a calendar event list between the two bounding dates.
+///
+typedef List<CalendarEvent> CalendarEventBuilder(DateTime start, DateTime end);
 
 ///
 /// The widget for the specific calendar event, this is what to render
@@ -47,8 +51,8 @@ class CalendarWidget extends StatefulWidget {
     required this.initialDate,
     required this.buildItem,
     required this.getEvents,
-    required this.beginningRangeDate,
-    required this.endingRangeDate,
+    TZDateTime? beginningRangeDate,
+    TZDateTime? endingRangeDate,
     this.bannerHeader,
     this.monthHeader,
     Key? key,
@@ -62,8 +66,14 @@ class CalendarWidget extends StatefulWidget {
     this.headerExpandIconColor,
     this.tapToCloseHeader = true,
     this.header,
-  })  : assert((beginningRangeDate.compareTo(initialDate) <= 0) &&
-            (initialDate.compareTo(endingRangeDate) <= 0)),
+  })  : beginningRangeDate =
+            beginningRangeDate ?? TZDateTime(location ?? local, 2010),
+        endingRangeDate = endingRangeDate ??
+            TZDateTime(location ?? local, clock.now().year + 2),
+        assert(beginningRangeDate == null ||
+            (beginningRangeDate.compareTo(initialDate) <= 0) &&
+                (endingRangeDate == null ||
+                    initialDate.compareTo(endingRangeDate) <= 0)),
         location = location ?? local,
         initialScrollOffset = initialScrollOffset ??
             initialDate.microsecondsSinceEpoch.toDouble(),
@@ -71,7 +81,17 @@ class CalendarWidget extends StatefulWidget {
 
   /// The initial date to show the calendar for.
   final TZDateTime initialDate;
+
+  ///
+  /// The edge of the range to display in the calendar, cannot scroll
+  /// back past this point
+  ///
   final TZDateTime beginningRangeDate;
+
+  ///
+  /// The end of the range to display yin the calendar, cannot scroll forward
+  /// past this point.
+  ///
   final TZDateTime endingRangeDate;
 
   /// The type of the calendar to displau.
@@ -87,7 +107,7 @@ class CalendarWidget extends StatefulWidget {
   final double initialScrollOffset;
 
   /// Returns the events to use to display on the screen.
-  final CalendarEventBuiler getEvents;
+  final CalendarEventBuilder getEvents;
 
   /// building the widget to display for each of the events in the calendar.
   final CalendarWidgetBuilder buildItem;
