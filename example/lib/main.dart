@@ -1,37 +1,23 @@
-import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:sliver_calendar/sliver_calendar.dart';
-import 'package:timezone/timezone.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
-  // Comment this line to enable debug printing...
-  debugPrint = (String message, {int wrapWidth}) {};
-
-  ByteData loadedData;
-
-  await Future.wait<void>(<Future<void>>[
-    rootBundle.load('assets/timezone/2018c.tzf').then((ByteData data) {
-      loadedData = data;
-      print('loaded data');
-    })
-  ]);
-  initializeDatabase(loadedData.buffer.asUint8List());
-  runApp(new MyApp());
+  tz.initializeTimeZones();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Calendar',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
@@ -40,10 +26,9 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate
       ],
       supportedLocales: const <Locale>[
-        const Locale('en', ''),
-        const Locale('fr', ''),
+        Locale('en', ''),
       ],
-      home: new MyHomePage(title: 'Flutter Calendar demo'),
+      home: MyHomePage(title: 'Flutter Calendar demo'),
     );
   }
 }
@@ -53,35 +38,53 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   List<CalendarEvent> events = <CalendarEvent>[];
-  Location loc;
-  Random random = new Random();
+  Random random = Random();
+  tz.Location loc;
 
-  Widget buildItem(BuildContext context, CalendarEvent e) {
-    return new Card(
-      child: new ListTile(
-        title: new Text("Event ${e.index}"),
-        subtitle: new Text("Yay for events"),
-        leading: const Icon(Icons.gamepad),
+  Widget trailingWidget(BuildContext ctx, CalendarWidgetState state) {
+    return IconButton(
+        icon: Icon(Icons.today_outlined),
+        onPressed: () {
+          state.scrollToDay(DateTime.now());
+        });
+  }
+
+  Widget buildItem(BuildContext ctx, CalendarEvent e) {
+    return Card(
+      shape: Border(left: BorderSide(color: Colors.blue, width: 3)),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          child: ListTile(
+            title: Text("Event：${e.index}"),
+            subtitle: Text("have fun..."),
+            leading: const Icon(Icons.grass),
+          ),
+          onTap: () {
+            print([e.index, e.instant.month, e.instant.day]);
+            // s.s
+          },
+        ),
       ),
     );
   }
 
   List<CalendarEvent> getEvents(DateTime start, DateTime end) {
-    if (loc != null && events.length == 0) {
-      TZDateTime nowTime =
-          new TZDateTime.now(loc).subtract(new Duration(days: 5));
+    if (loc != null && events.isEmpty) {
+      tz.TZDateTime nowTime =
+          tz.TZDateTime.now(loc).subtract(Duration(days: 5));
       for (int i = 0; i < 20; i++) {
-        TZDateTime start =
-            nowTime.add(new Duration(days: i + random.nextInt(10)));
-        events.add(new CalendarEvent(
+        tz.TZDateTime start =
+            nowTime.add(Duration(days: i + random.nextInt(10)));
+        events.add(CalendarEvent(
             index: i,
             instant: start,
-            instantEnd: start.add(new Duration(minutes: 30))));
+            instantEnd: start.add(Duration(minutes: 30))));
       }
     }
     return events;
@@ -89,40 +92,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            FutureBuilder<String>(
+              future: FlutterNativeTimezone.getLocalTimezone(),
+              builder: (BuildContext context, AsyncSnapshot<String> tzone) {
+                if (tzone.hasData) {
+                  loc = tz.getLocation(tzone.data);
+                  tz.TZDateTime nowTime = tz.TZDateTime.now(loc);
+                  return Expanded(
+                    child: CalendarWidget(
+                      initialDate: nowTime,
+                      location: loc,
+                      buildItem: buildItem,
+                      getEvents: getEvents,
+                      headerColor: Colors.lightBlue,
+                      tapToCloseHeader: false,
+                      leading: IconButton(
+                          icon: Icon(Icons.menu),
+                          onPressed: () {
+                            print("Clicked menu");
+                          }),
+                      trailing: trailingWidget,
+                      headerMonthStyle:
+                          TextStyle(color: Colors.black87, fontSize: 18.0),
+                      monthHeader:
+                          AssetImage("assets/images/calendarbanner.jpg"),
+                      weekBeginsWithDay:
+                          0, // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text("Getting the timezone..."),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
-      body: new Column(
-        children: <Widget>[
-          new FutureBuilder<String>(
-            future: FlutterNativeTimezone.getLocalTimezone(),
-            builder: (BuildContext context, AsyncSnapshot<String> tz) {
-              if (tz.hasData) {
-                loc = getLocation(tz.data);
-                TZDateTime nowTime = new TZDateTime.now(loc);
-                return new Expanded(
-                  child: new CalendarWidget(
-                    initialDate: nowTime,
-                    location: loc,
-                    buildItem: buildItem,
-                    getEvents: getEvents,
-                    bannerHeader:
-                        new AssetImage("assets/images/calendarheader.png"),
-                    monthHeader:
-                        new AssetImage("assets/images/calendarbanner.jpg"),
-                    weekBeginsWithDay:
-                        1, // Sunday = 0, Monday = 1, Tuesday = 2, ..., Saturday = 6
-                  ),
-                );
-              } else {
-                return new Center(
-                  child: new Text("Getting the timezone..."),
-                );
-              }
-            },
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        mini: true,
+        child: Icon(Icons.add),
+        onPressed: () {
+          print("hahaha");
+        },
       ),
     );
   }
