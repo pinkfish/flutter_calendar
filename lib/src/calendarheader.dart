@@ -68,6 +68,7 @@ class CalendarHeader extends StatefulWidget {
       this.eventIndicator,
       this.beginningRangeDate,
       this.endingRangeDate,
+      this.leading,
       this.trailing
       )
       : _location = location;
@@ -83,6 +84,7 @@ class CalendarHeader extends StatefulWidget {
   final HeaderDayIndicator? dayIndicator;
   final TZDateTime beginningRangeDate;
   final TZDateTime endingRangeDate;
+  final Widget? leading;
   final CalendarHeaderBuilder? trailing;
 
   @override
@@ -266,7 +268,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(0),
-        leading: widget.state.widget.leading ?? null,
+        leading: widget.leading ?? null,
         title: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
