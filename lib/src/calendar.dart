@@ -277,10 +277,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        ListTile(
-          contentPadding:EdgeInsets.all(0),
-          leading: widget.leading ?? null,
-          title: CalendarHeader(
+        CalendarHeader(
                 this,
                 widget.bannerHeader,
                 widget.location,
@@ -291,9 +288,9 @@ class CalendarWidgetState extends State<CalendarWidget> {
                 null,
                 null,
                 widget.beginningRangeDate,
-                widget.endingRangeDate),
-          trailing: widget.trailing ?? null
-        ),
+                widget.endingRangeDate,
+                widget.leading,
+                widget.trailing),
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(top: 5.0),
