@@ -25,6 +25,11 @@ typedef List<CalendarEvent> CalendarEventBuilder(DateTime start, DateTime end);
 typedef Widget CalendarWidgetBuilder(BuildContext context, CalendarEvent index);
 
 ///
+/// Widget for customizing a specific title to display the desired content
+///
+// typedef Widget CalendarHeaderBuilder(BuildContext context, CalendarWidgetState? state);
+
+///
 /// The widget to show the calendar with a header that displays the
 /// current month, drop down and then the events in a sliverlist.
 ///
@@ -135,7 +140,7 @@ class CalendarWidget extends StatefulWidget {
   final Widget? leading;
 
   /// The trailing to display.
-  final Widget? trailing;
+  final CalendarHeaderBuilder? trailing;
 
   @override
   State createState() {
