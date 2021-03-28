@@ -62,7 +62,10 @@ class CalendarHeader extends StatefulWidget {
       this.dayIndicator,
       this.eventIndicator,
       this.beginningRangeDate,
-      this.endingRangeDate)
+      this.endingRangeDate,
+      this.leading,
+      this.trailing
+      )
       : _location = location;
 
   final Location _location;
@@ -76,6 +79,8 @@ class CalendarHeader extends StatefulWidget {
   final HeaderDayIndicator? dayIndicator;
   final TZDateTime beginningRangeDate;
   final TZDateTime endingRangeDate;
+  final Widget? leading;
+  final Widget? trailing;
 
   @override
   State createState() {
@@ -256,33 +261,38 @@ class _CalendarHeaderState extends State<CalendarHeader>
               )
             : null,
       ),
-      child: GestureDetector(
-        onTap: _handleOpen,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(
-              (myExpandedState
-                      ? MaterialLocalizations.of(context)
-                          .formatMonthYear(monthToShow(_monthIndex))
-                      : MaterialLocalizations.of(context)
-                          .formatMonthYear(currentTop)) +
-                  ' ',
-              style: widget.headerStyle ??
-                  Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(fontSize: 25.0),
-            ),
-            RotationTransition(
-              turns: _iconTurns,
-              child: Icon(
-                Icons.expand_more,
-                color: widget.expandIconColor ?? Colors.black,
-                size: 25.0,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(0),
+        leading: widget.leading ?? null,
+        trailing: widget.trailing ?? null,
+        title: GestureDetector(
+          onTap: _handleOpen,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Text(
+                (myExpandedState
+                        ? MaterialLocalizations.of(context)
+                            .formatMonthYear(monthToShow(_monthIndex))
+                        : MaterialLocalizations.of(context)
+                            .formatMonthYear(currentTop)) +
+                    ' ',
+                style: widget.headerStyle ??
+                    Theme.of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(fontSize: 25.0),
               ),
-            ),
-          ],
+              RotationTransition(
+                turns: _iconTurns,
+                child: Icon(
+                  Icons.expand_more,
+                  color: widget.expandIconColor ?? Colors.black,
+                  size: 25.0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
