@@ -40,6 +40,11 @@ typedef EventIndicator = Widget Function(
     Widget button, List<CalendarEvent>? events);
 
 ///
+/// Widget for customizing a specific title to display the desired content
+///
+typedef Widget CalendarHeaderBuilder(BuildContext context, CalendarWidgetState? state);
+
+///
 /// Displays the header for the calendar.  This handles the title with the
 /// month/year and a drop down item as well as opening to show the whole month.
 ///
@@ -63,7 +68,6 @@ class CalendarHeader extends StatefulWidget {
       this.eventIndicator,
       this.beginningRangeDate,
       this.endingRangeDate,
-      this.leading,
       this.trailing
       )
       : _location = location;
@@ -79,8 +83,7 @@ class CalendarHeader extends StatefulWidget {
   final HeaderDayIndicator? dayIndicator;
   final TZDateTime beginningRangeDate;
   final TZDateTime endingRangeDate;
-  final Widget? leading;
-  final Widget? trailing;
+  final CalendarHeaderBuilder? trailing;
 
   @override
   State createState() {
@@ -263,43 +266,46 @@ class _CalendarHeaderState extends State<CalendarHeader>
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(0),
-        leading: widget.leading ?? null,
-        trailing: widget.trailing ?? null,
-        title: GestureDetector(
-          onTap: _handleOpen,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Text(
-                (myExpandedState
-                        ? MaterialLocalizations.of(context)
-                            .formatMonthYear(monthToShow(_monthIndex))
-                        : MaterialLocalizations.of(context)
-                            .formatMonthYear(currentTop)) +
-                    ' ',
-                style: widget.headerStyle ??
-                    Theme.of(context)
-                        .textTheme
-                        .headline6!
-                        .copyWith(fontSize: 25.0),
-              ),
-              RotationTransition(
-                turns: _iconTurns,
-                child: Icon(
-                  Icons.expand_more,
-                  color: widget.expandIconColor ?? Colors.black,
-                  size: 25.0,
-                ),
-              ),
-            ],
-          ),
+        leading: widget.state.widget.leading ?? null,
+        title: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            GestureDetector(
+              onTap: _handleOpen,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text(
+                    (myExpandedState
+                            ? MaterialLocalizations.of(context)
+                                .formatMonthYear(monthToShow(_monthIndex))
+                            : MaterialLocalizations.of(context)
+                                .formatMonthYear(currentTop)) +
+                        ' ',
+                    style: widget.headerStyle ??
+                        Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(fontSize: 25.0),
+                  ),
+                  RotationTransition(
+                    turns: _iconTurns,
+                    child: Icon(
+                      Icons.expand_more,
+                      color: widget.expandIconColor ?? Colors.black,
+                      size: 25.0,
+                    ),
+                  ),
+                ]
+              )
+            ),
+            widget.trailing != null ?
+            widget.trailing!(context, widget.state) : Container()
+          ]
         ),
       ),
     );
-  }
-
-  void refresh() {
-    Future.delayed(const Duration(milliseconds: 600), () => setState(() {}));
   }
 }
 
