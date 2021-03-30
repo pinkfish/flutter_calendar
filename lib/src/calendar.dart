@@ -53,7 +53,7 @@ class CalendarWidget extends StatefulWidget {
     required this.getEvents,
     TZDateTime? beginningRangeDate,
     TZDateTime? endingRangeDate,
-    this.bannerHeader,
+    this.dayIndicator,
     this.monthHeader,
     Key? key,
     this.view = CalendarViewType.Schedule,
@@ -116,8 +116,8 @@ class CalendarWidget extends StatefulWidget {
   /// the header to use at the top of each momth.
   final ImageProvider? monthHeader;
 
-  /// the header to use at the top of the banner.
-  final ImageProvider? bannerHeader;
+  /// Indicators for custom dates
+  final HeaderDayIndicator? dayIndicator;
 
   /// The color of the header.
   final Color? headerColor;
@@ -279,13 +279,12 @@ class CalendarWidgetState extends State<CalendarWidget> {
       children: <Widget>[
         CalendarHeader(
                 this,
-                widget.bannerHeader,
                 widget.location,
                 widget.headerColor,
                 widget.headerMonthStyle,
                 widget.headerExpandIconColor,
                 widget.weekBeginsWithDay,
-                null,
+                widget.dayIndicator,
                 null,
                 widget.beginningRangeDate,
                 widget.endingRangeDate,
