@@ -28,7 +28,7 @@ final Duration _kExpand = Duration(milliseconds: 200);
 ///      );
 ///
 typedef HeaderDayIndicator = Widget Function(
-    ThemeData theme, DateTime day, DateTime nowTime);
+    BuildContext context, DateTime day, CalendarWidgetState? state);
 
 ///
 /// Generates the small boxes on the calendar to indicate that there are events
@@ -58,7 +58,6 @@ class CalendarHeader extends StatefulWidget {
   ///
   CalendarHeader(
       this.state,
-      this.bannerHeader,
       Location location,
       this.color,
       this.headerStyle,
@@ -70,12 +69,10 @@ class CalendarHeader extends StatefulWidget {
       this.endingRangeDate,
       this.leading,
       this.trailing
-      )
-      : _location = location;
+      ) : _location = location;
 
   final Location _location;
   final CalendarWidgetState state;
-  final ImageProvider? bannerHeader;
   final Color? color;
   final TextStyle? headerStyle;
   final Color? expandIconColor;
@@ -157,11 +154,6 @@ class _CalendarHeaderState extends State<CalendarHeader>
       _controller.forward();
     } else {
       _controller.reverse();
-      // _controller.reverse().then<void>((void value) {
-      //   setState(() {
-      //     // Rebuild without widget.children.
-      //   });
-      // });
     }
   }
 
@@ -255,16 +247,9 @@ class _CalendarHeaderState extends State<CalendarHeader>
         DateTime(currentTopTemp.year, currentTopTemp.month, currentTopTemp.day);
 
     return Container(
-      padding: EdgeInsets.only(top: 10.0, left: 5.0, bottom: 10.0),
+      padding: EdgeInsets.only(left: 5.0),
       decoration: BoxDecoration(
-        color: widget.color ?? Colors.white,
-        image: widget.bannerHeader != null
-            ? DecorationImage(
-                image: widget.bannerHeader!,
-                fit: BoxFit.fitHeight,
-                alignment: Alignment(1.0, 1.0),
-              )
-            : null,
+        color: widget.color ?? Colors.white
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(0),
@@ -422,7 +407,7 @@ class _CalendarMonthDisplayState extends State<_CalendarMonthDisplay> {
       button = SizedBox(width: 1.0);
     } else {
       if (widget.dayIndicator != null) {
-        button = widget.dayIndicator!(theme, day, nowTime);
+        button = widget.dayIndicator!(context, day, widget.sharedState);
       } else {
         button = Center(
           child: TextButton(
