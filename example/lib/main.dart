@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -44,14 +45,50 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<CalendarEvent> events = <CalendarEvent>[];
   Random random = Random();
+  DateTime _now = DateTime.now();
+  DateTime selectedDate;
+  DateTime nowDate;
   tz.Location loc;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = _now;
+    nowDate = DateTime(_now.year, _now.month, _now.day);
+  }
 
   Widget trailingWidget(BuildContext ctx, CalendarWidgetState state) {
     return IconButton(
         icon: Icon(Icons.today_outlined),
         onPressed: () {
-          state.scrollToDay(DateTime.now());
+          state.scrollToDay(nowDate);
         });
+  }
+
+  Widget dayIndicatorWidget(BuildContext c, DateTime d, CalendarWidgetState s) {
+    return GestureDetector(
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: d.isAtSameMomentAs(nowDate)
+                ? Colors.lime
+                : d.isAtSameMomentAs(selectedDate)
+                    ? Colors.grey.shade200
+                    : null,
+            shape: BoxShape.circle),
+        child: Text(
+          d.day.toString(),
+          style: TextStyle(color: Colors.black54),
+        ),
+      ),
+      onDoubleTap: () {
+        print("Double click");
+      },
+      onTap: () => setState(() {
+        selectedDate = d;
+        s.scrollToDay(d);
+      }),
+    );
   }
 
   Widget buildItem(BuildContext ctx, CalendarEvent e) {
@@ -108,14 +145,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       location: loc,
                       buildItem: buildItem,
                       getEvents: getEvents,
-                      headerColor: Colors.lightBlue,
                       tapToCloseHeader: false,
+                      dayIndicator: dayIndicatorWidget,
                       leading: IconButton(
                           icon: Icon(Icons.menu),
                           onPressed: () {
                             print("Clicked menu");
                           }),
                       trailing: trailingWidget,
+                      headerColor: Colors.lightBlue,
                       headerMonthStyle:
                           TextStyle(color: Colors.black87, fontSize: 18.0),
                       monthHeader:
