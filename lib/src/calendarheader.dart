@@ -113,6 +113,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
   late Animation<double> _iconTurns;
   late int _monthIndex;
   bool myExpandedState = false;
+  bool _monthState = false;
   int? _beginningMonthIndex;
   int? _endingMonthIndex;
 
@@ -131,12 +132,14 @@ class _CalendarHeaderState extends State<CalendarHeader>
     _endingMonthIndex = monthIndexFromTime(widget.endingRangeDate);
     _indexChangeSubscription =
         widget.state.indexChangeStream.listen((int newTop) {
-      setState(() {
-        int ms = (widget.state.currentTopDisplayIndex + 1) *
-            Duration.millisecondsPerDay;
-        DateTime currentTopTemp = DateTime.fromMillisecondsSinceEpoch(ms);
-        _monthIndex = monthIndexFromTime(currentTopTemp);
-      });
+      if (!_monthState) {
+        setState(() {
+          int ms = (widget.state.currentTopDisplayIndex + 1) *
+              Duration.millisecondsPerDay;
+          DateTime currentTopTemp = DateTime.fromMillisecondsSinceEpoch(ms);
+          _monthIndex = monthIndexFromTime(currentTopTemp);
+        });
+      }
     });
     _headerExpandedSubscription =
         widget.state.headerExpandedChangeStream!.listen((bool change) {
@@ -201,14 +204,16 @@ class _CalendarHeaderState extends State<CalendarHeader>
                     DismissDirection.horizontal: 0.2
                   },
                   direction: direction,
-                  onDismissed: (DismissDirection direction) {
-                    setState(() {
+                  onDismissed: (DismissDirection direction) => setState(() {
                       _monthIndex +=
                           direction == DismissDirection.endToStart ? 1 : -1;
                       // Update the current scroll pos too.
+                      _monthState = true;
                       widget.state.scrollToDay(monthToShow(_monthIndex));
-                    });
-                  },
+                      Future.delayed(const Duration(milliseconds: 1500), () {
+                        _monthState = false;
+                      });
+                  }),
                   child: _CalendarMonthDisplay(
                       sharedState: widget.state,
                       location: widget._location,
@@ -225,7 +230,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
       ),
     );
   }
-
+    
   @override
   Widget build(BuildContext context) {
     return Material(
