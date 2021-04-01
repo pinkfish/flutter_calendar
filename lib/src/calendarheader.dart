@@ -134,10 +134,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
         widget.state.indexChangeStream.listen((int newTop) {
       if (!_monthState) {
         setState(() {
-          int ms = (widget.state.currentTopDisplayIndex + 1) *
-              Duration.millisecondsPerDay;
-          DateTime currentTopTemp = DateTime.fromMillisecondsSinceEpoch(ms);
-          _monthIndex = monthIndexFromTime(currentTopTemp);
+          _monthIndex = monthIndexFromTime(getTopDisplayDate());
         });
       }
     });
@@ -152,6 +149,12 @@ class _CalendarHeaderState extends State<CalendarHeader>
     });
   }
 
+  DateTime getTopDisplayDate() {
+    int ms = (widget.state.currentTopDisplayIndex + 1) *
+                Duration.millisecondsPerDay;
+    return DateTime.fromMillisecondsSinceEpoch(ms);
+  }
+    
   void _doAnimation() {
     if (myExpandedState) {
       _controller.forward();
@@ -245,9 +248,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
   }
 
   Widget _buildCurrentHeader(BuildContext context) {
-    int ms =
-        (widget.state.currentTopDisplayIndex + 1) * Duration.millisecondsPerDay;
-    DateTime currentTopTemp = DateTime.fromMillisecondsSinceEpoch(ms);
+    DateTime currentTopTemp = getTopDisplayDate();
     DateTime currentTop =
         DateTime(currentTopTemp.year, currentTopTemp.month, currentTopTemp.day);
 
