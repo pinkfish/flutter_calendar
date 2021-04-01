@@ -265,6 +265,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
           children: <Widget>[
             GestureDetector(
               onTap: _handleOpen,
+              onDoubleTap: null,
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
