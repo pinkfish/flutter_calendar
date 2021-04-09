@@ -362,20 +362,22 @@ class _CalendarMonthDisplayState extends State<_CalendarMonthDisplay> {
       }
       List<Widget> eventIndicators = <Widget>[];
       for (CalendarEvent event in widget.sharedState.events[eventIndex]!) {
-        eventIndicators.add(
-          SizedBox(
-            height: 4.0,
-            width: 4.0,
-            child: CustomPaint(
-              painter: _CalendarEventIndicator(2.0, event),
+        if (widget.displayDate.month == event.instant.month) {
+          eventIndicators.add(
+            SizedBox(
+              height: 4.0,
+              width: 4.0,
+              child: CustomPaint(
+                painter: _CalendarEventIndicator(2.0, event),
+              ),
             ),
-          ),
-        );
-        eventIndicators.add(
-          SizedBox(
-            width: 2.0,
-          ),
-        );
+          );
+          eventIndicators.add(
+            SizedBox(
+              width: 2.0,
+            ),
+          );
+        }
       }
       return SizedBox(
         width: 40.0,
