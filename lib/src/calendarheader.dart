@@ -199,7 +199,7 @@ class _CalendarHeaderState extends State<CalendarHeader>
             child: Align(
               heightFactor: _easeInAnimation.value,
               child: Container(
-                constraints: BoxConstraints(minHeight: 230.0, maxHeight: 230.0),
+                constraints: BoxConstraints(minHeight: 230.0, maxHeight: 270.0),
                 child: Dismissible(
                   key: ValueKey<int?>(_monthIndex),
                   resizeDuration: null,
@@ -457,12 +457,21 @@ class _CalendarMonthDisplayState extends State<_CalendarMonthDisplay> {
     DateTime topThird = topSecond.add(widget.week);
     DateTime topFourth = topThird.add(widget.week);
     DateTime topFifth = topFourth.add(widget.week);
+    // Check if the sixth row is displayed or not.
+    int lastday = DateTime(topFifth.year, topFifth.month + 1, 0).day;
+    DateTime topSixth = topFifth;
+    bool isShowSixthRow = false;
+    if ((topFifth.day + 7) <= lastday) {
+      isShowSixthRow = true;
+      topSixth = topFifth.add(widget.week);
+    }
     List<Widget> dayHeaders = <Widget>[];
     List<Widget> firstDays = <Widget>[];
     List<Widget> secondDays = <Widget>[];
     List<Widget> thirdDays = <Widget>[];
     List<Widget> fourthDays = <Widget>[];
     List<Widget> fifthDays = <Widget>[];
+    List<Widget> sixthDays = <Widget>[];
     ThemeData theme = Theme.of(context);
 
     for (int i = 0; i < 7; i++) {
@@ -493,6 +502,12 @@ class _CalendarMonthDisplayState extends State<_CalendarMonthDisplay> {
 
       // Fifth row.
       fifthDays.add(_buildButton(theme, topFifth, nowTime));
+        
+      // Join the sixth row if exist.
+      if (isShowSixthRow) {
+        sixthDays.add(_buildButton(theme, topSixth, nowTime));
+        topSixth = topSixth.add(oneDay);
+      }
 
       topFirst = topFirst.add(oneDay);
       topSecond = topSecond.add(oneDay);
@@ -542,6 +557,13 @@ class _CalendarMonthDisplayState extends State<_CalendarMonthDisplay> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: fifthDays,
         ),
+        sixthDays.length > 0 ? 
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: sixthDays,
+          ) : Container(),
         SizedBox(height: 10.0),
       ],
     );
