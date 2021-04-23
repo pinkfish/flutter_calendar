@@ -200,6 +200,10 @@ class _CalendarHeaderState extends State<CalendarHeader>
               heightFactor: _easeInAnimation.value,
               child: Container(
                 constraints: BoxConstraints(minHeight: 230.0, maxHeight: 270.0),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(
+                    color: Colors.grey.shade400, width: 1.5))
+                ),
                 child: Dismissible(
                   key: ValueKey<int?>(_monthIndex),
                   resizeDuration: null,
