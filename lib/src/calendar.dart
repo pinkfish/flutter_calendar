@@ -53,7 +53,7 @@ class CalendarWidget extends StatefulWidget {
     required this.getEvents,
     TZDateTime? beginningRangeDate,
     TZDateTime? endingRangeDate,
-    this.bannerHeader,
+    this.dayIndicator,
     this.monthHeader,
     Key? key,
     this.view = CalendarViewType.Schedule,
@@ -65,7 +65,8 @@ class CalendarWidget extends StatefulWidget {
     this.headerMonthStyle,
     this.headerExpandIconColor,
     this.tapToCloseHeader = true,
-    this.header,
+    this.leading,
+    this.trailing,
   })  : beginningRangeDate =
             beginningRangeDate ?? TZDateTime(location ?? local, 2010),
         endingRangeDate = endingRangeDate ??
@@ -115,8 +116,8 @@ class CalendarWidget extends StatefulWidget {
   /// the header to use at the top of each momth.
   final ImageProvider? monthHeader;
 
-  /// the header to use at the top of the banner.
-  final ImageProvider? bannerHeader;
+  /// Indicators for custom dates
+  final HeaderDayIndicator? dayIndicator;
 
   /// The color of the header.
   final Color? headerColor;
@@ -130,8 +131,11 @@ class CalendarWidget extends StatefulWidget {
   /// If you can close the header with a tap.
   final bool tapToCloseHeader;
 
-  /// The header to display.
-  final Widget? header;
+  /// The leading to display.
+  final Widget? leading;
+
+  /// The trailing to display.
+  final CalendarHeaderBuilder? trailing;
 
   @override
   State createState() {
@@ -273,19 +277,19 @@ class CalendarWidgetState extends State<CalendarWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        widget.header ??
-            CalendarHeader(
+        CalendarHeader(
                 this,
-                widget.bannerHeader,
                 widget.location,
                 widget.headerColor,
                 widget.headerMonthStyle,
                 widget.headerExpandIconColor,
                 widget.weekBeginsWithDay,
-                null,
+                widget.dayIndicator,
                 null,
                 widget.beginningRangeDate,
-                widget.endingRangeDate),
+                widget.endingRangeDate,
+                widget.leading,
+                widget.trailing),
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(top: 5.0),

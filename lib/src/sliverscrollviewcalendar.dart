@@ -151,8 +151,8 @@ class SliverScrollViewCalendarElement extends StatelessElement
               currentChild = _state.renderSliverList.childAfter(currentChild)!;
               parentData =
                   currentChild.parentData as SliverMultiBoxAdaptorParentData?;
-              debugPrint('finding index ${parentData!.index} $currentChild');
-            } while (parentData.index != scrollToIndex);
+              // debugPrint('finding index ${parentData!.index} $currentChild');
+            } while (parentData!.index != scrollToIndex);
             if (parentData.index == scrollToIndex) {
               // Yay!  Scroll there and end.
               calendarWidget.controller!.animateTo(parentData.layoutOffset!,
