@@ -36,3 +36,8 @@ how flutter normally works.
 ## [0.4.1] - Mar 4th 2021
 
 * Bug in null safety
+
+## [1.0.0] - Oct 18th 2021
+
+* Fix up an issue with version of packages and make less dependent on specific versions.
+
