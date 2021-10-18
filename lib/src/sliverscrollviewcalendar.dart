@@ -213,7 +213,7 @@ class SliverScrollViewCalendarElement extends StatelessElement
         List<Widget> displayEvents = <Widget>[];
         if (index == _nowIndex) {
           TZDateTime nowTime = TZDateTime.now(_currentLocation);
-          style.copyWith(color: Theme.of(context).accentColor);
+          style.copyWith(color: Theme.of(context).colorScheme.secondary);
           int lastMS =
               nowTime.millisecondsSinceEpoch - Duration.millisecondsPerDay;
           bool shownDivider = false;

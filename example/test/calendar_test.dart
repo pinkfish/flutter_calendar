@@ -16,7 +16,7 @@ void main() {
     await loadAppFonts();
 
     String timezone = "America/Los_Angeles";
-    Random random = new Random();
+    Random random =  Random();
     final la = getLocation(timezone);
 
     final nowTime = TZDateTime(la, 2010, 1, 2, 3, 4, 5, 6, 7);
@@ -54,21 +54,21 @@ List<CalendarEvent> getEvents(DateTime start, DateTime end, Location loc,
     Random random, TZDateTime nowTime) {
   var events = <CalendarEvent>[];
   for (int i = 0; i < 20; i++) {
-    TZDateTime start = nowTime.add(new Duration(days: i));
-    events.add(new CalendarEvent(
+    TZDateTime start = nowTime.add( Duration(days: i));
+    events.add( CalendarEvent(
         index: i,
         instant: start,
-        instantEnd: start.add(new Duration(minutes: 30))));
+        instantEnd: start.add( Duration(minutes: 30))));
   }
 
   return events;
 }
 
 Widget buildItem(BuildContext context, CalendarEvent e) {
-  return new Card(
-    child: new ListTile(
-      title: new Text("Event ${e.index}"),
-      subtitle: new Text("Yay for events"),
+  return  Card(
+    child:  ListTile(
+      title:  Text("Event ${e.index}"),
+      subtitle:  Text("Yay for events"),
       leading: const Icon(Icons.gamepad),
     ),
   );
@@ -78,7 +78,7 @@ Widget buildItem(BuildContext context, CalendarEvent e) {
 /// Makes a happy little testable widget with a wrapper.
 ///
 Future<Widget> makeTestableWidget(Widget child,
-    {NavigatorObserver observer}) async {
+    { NavigatorObserver? observer}) async {
   initializeTimeZones();
 
   return MediaQuery(

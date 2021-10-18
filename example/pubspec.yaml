@@ -2,37 +2,25 @@ name: calendar_example
 description: Example of how to use the calendar widget.
 
 environment:
-  sdk: '>=2.10.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 dependencies:
   flutter:
     sdk: flutter
-  flutter_native_timezone: ^1.0.4
+  flutter_native_timezone: ">=2.0.0 <3.0.0"
   sliver_calendar:
     path: ../
-  timezone:  ^0.7.0-nullsafety.0
-     # Need to use git here since there is a bug in the main repository.
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  timezone: ">=0.8.0 <1.0.0"
+  cupertino_icons: ">=1.0.3 <2.0.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test: any
-  mockito: ^5.0.0
-  golden_toolkit: ^0.9.0
+  mockito: ^5.0.16
+  golden_toolkit: ^0.11.0
 
 
-# For information on the generic Dart part of this file, see the
-# following page: https://www.dartlang.org/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
 
   assets:

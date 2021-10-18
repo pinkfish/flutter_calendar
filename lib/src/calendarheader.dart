@@ -392,7 +392,7 @@ class _CalendarMonthDisplay extends StatelessWidget {
           child: TextButton(
             style: TextButton.styleFrom(
               primary: day.isAtSameMomentAs(nowTime)
-                  ? theme.accentColor
+                  ? theme.colorScheme.secondary
                   : day.isAtSameMomentAs(displayDate)
                       ? Colors.grey.shade200
                       : Colors.white,
