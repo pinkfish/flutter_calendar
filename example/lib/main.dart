@@ -1,29 +1,28 @@
-import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:sliver_calendar/sliver_calendar.dart';
 import 'package:timezone/timezone.dart';
+import 'package:timezone/data/latest_all.dart' if (kIsWeb) 'package:timezone/browser.dart' as tz;
+
 
 void main() async {
-  // Comment this line to enable debug printing...
-  debugPrint = (String? message, {int? wrapWidth}) {};
+  WidgetsFlutterBinding.ensureInitialized();
 
-  ByteData loadedData = ByteData(0);
+  if (kIsWeb) {
+     tz.initializeTimeZones();
+  } else {
+    tz.initializeTimeZones();
+  }
 
-  await Future.wait<void>(<Future<void>>[
-    rootBundle.load('assets/timezone/2018c.tzf').then((ByteData data) {
-      loadedData = data;
-      print('loaded data');
-    })
-  ]);
-  initializeDatabase(loadedData.buffer.asUint8List());
-  var tz = await FlutterNativeTimezone.getLocalTimezone();
-  var loc = getLocation(tz);
+  var localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+  if (localTimeZone == 'Etc/UTC') {
+
+  }
+  var loc = getLocation(localTimeZone);
   runApp(MyApp(loc));
 }
 
@@ -31,6 +30,8 @@ class MyApp extends StatelessWidget {
   final Location loc;
 
   MyApp(this.loc);
+
+
 
   // This widget is the root of your application.
   @override

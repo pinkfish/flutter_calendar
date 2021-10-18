@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.example">
+    package="com.whelksoft.calendar">
    <application
         android:label="example"
         android:icon="@mipmap/ic_launcher">
